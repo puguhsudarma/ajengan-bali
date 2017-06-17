@@ -24,11 +24,12 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import ActionButton from 'react-native-action-button';
+import Modal from 'react-native-modal';
+import getDirections from 'react-native-google-maps-directions';
 import {
   TitleCard
 } from '../components';
-import ActionButton from 'react-native-action-button';
-import Modal from 'react-native-modal';
 
 export default class DetailMakanan extends Component {
   constructor(props) {
@@ -91,6 +92,26 @@ export default class DetailMakanan extends Component {
         desc: '',
       },
     };
+  }
+
+  handleGetDirections = () => {
+    const data = {
+      source: {
+        latitude: -8.685324,
+        longitude: 115.211429,
+      },
+      destination: {
+        latitude: -8.648222,
+        longitude: 115.225591,
+      },
+      // params: [
+      //   {
+      //     key: 'dirflg',
+      //     value: 'w',
+      //   },
+      // ],
+    };
+    getDirections(data);
   }
 
   review = () => {
@@ -266,7 +287,7 @@ export default class DetailMakanan extends Component {
         </Content>
 
         <ActionButton buttonColor='rgba(231,76,60,1)'>
-          <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => console.log('notes tapped!')}>
+          <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
             <Icon name='md-map' style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title='Beri Review' onPress={() => this.setState({ modalVisible: !modalVisible })}>
