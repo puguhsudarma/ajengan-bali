@@ -27,11 +27,17 @@ import StarRating from 'react-native-star-rating';
 import {
   Image,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modal';
 import getDirections from 'react-native-google-maps-directions';
-import { TitleCard } from '../components';
+import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
+import {
+  TitleCard,
+  Alert,
+} from '../components';
 //images
 import profileImage from '../images/avatar5.png';
 import warung1 from '../images/warung1.jpg';
@@ -142,14 +148,55 @@ export default class DetailWarung extends Component {
         star: 0,
         desc: '',
       },
+      coordSuccess: false,
+      myCoord: null,
     };
   }
 
+  componentDidMount() {
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+        .then(granted => {
+          console.log(granted);
+          if (granted) this.watchLocation();
+        });
+    } else {
+      this.watchLocation();
+    }
+  }
+
+  watchLocation = () => {
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href="#">Learn more</a>',
+      ok: 'YES',
+      cancel: 'NO',
+    }).then((success) => {
+      console.log(success);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log(position.coords);
+          this.setState({ myCoord: position.coords, coordSuccess: true, });
+        },
+        (err) => {
+          Alert(err.message);
+          console.log(err);
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
+    }).catch((err) => {
+      Alert('Geolocation harus diaktifkan.');
+      console.log(err);
+    });
+  }
+
   handleGetDirections = () => {
+    if (!this.state.coordSuccess) return Alert('Geolocation tidak ditemukan.');
+
+    const { latitude, longitude } = this.state.myCoord;
     const data = {
       source: {
-        latitude: -8.685324,
-        longitude: 115.211429,
+        latitude,
+        longitude,
       },
       destination: {
         latitude: -8.648222,

@@ -23,12 +23,16 @@ import StarRating from 'react-native-star-rating';
 import {
   Image,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modal';
 import getDirections from 'react-native-google-maps-directions';
+import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 import {
-  TitleCard
+  TitleCard,
+  Alert,
 } from '../components';
 
 export default class DetailMakanan extends Component {
@@ -91,14 +95,55 @@ export default class DetailMakanan extends Component {
         star: 0,
         desc: '',
       },
+      coordSuccess: false,
+      myCoord: null,
     };
   }
 
+  componentDidMount() {
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+        .then(granted => {
+          console.log(granted);
+          if (granted) this.watchLocation();
+        });
+    } else {
+      this.watchLocation();
+    }
+  }
+
+  watchLocation = () => {
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href="#">Learn more</a>',
+      ok: 'YES',
+      cancel: 'NO',
+    }).then((success) => {
+      console.log(success);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log(position.coords);
+          this.setState({ myCoord: position.coords, coordSuccess: true, });
+        },
+        (err) => {
+          Alert(err.message);
+          console.log(err);
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
+    }).catch((err) => {
+      Alert('Geolocation harus diaktifkan.');
+      console.log(err);
+    });
+  }
+
   handleGetDirections = () => {
+    if(!this.state.coordSuccess) return Alert('Geolocation tidak ditemukan.');
+
+    const { latitude, longitude } = this.state.myCoord;
     const data = {
       source: {
-        latitude: -8.685324,
-        longitude: 115.211429,
+        latitude,
+        longitude,
       },
       destination: {
         latitude: -8.648222,
@@ -180,7 +225,7 @@ export default class DetailMakanan extends Component {
   }
 
   render() {
-    const { header, modalVisible, maxRating, modalInputTemp, detailMakanan, detailWarung } = this.state;
+    const { header, modalVisible, maxRating, modalInputTemp, detailMakanan, detailWarung, coordSuccess } = this.state;
     const { nama, deskripsi, gambar, rating, harga, kategori } = detailMakanan;
     const { nama: namaWarung, alamat, daerah, range } = detailWarung;
     const { fromWarungPage } = this.props.navigation.state.params;
@@ -266,15 +311,13 @@ export default class DetailMakanan extends Component {
               <Text>{alamat}</Text>
             </CardItem>
             {
-              !fromWarungPage ?
-                <CardItem>
-                  <Icon active style={{ color: 'green' }} name="md-book" />
-                  <Button rounded onPress={() => navigate('detailWarung')}>
-                    <Text>Halaman Warung</Text>
-                  </Button>
-                </CardItem>
-                :
-                null
+              !fromWarungPage &&
+              <CardItem>
+                <Icon active style={{ color: 'green' }} name="md-book" />
+                <Button rounded onPress={() => navigate('detailWarung')}>
+                  <Text>Halaman Warung</Text>
+                </Button>
+              </CardItem>
             }
           </Card>
 
@@ -287,9 +330,11 @@ export default class DetailMakanan extends Component {
         </Content>
 
         <ActionButton buttonColor='rgba(231,76,60,1)'>
-          <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
-            <Icon name='md-map' style={styles.actionButtonIcon} />
-          </ActionButton.Item>
+          
+            <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
+              <Icon name='md-map' style={styles.actionButtonIcon} />
+            </ActionButton.Item>
+          
           <ActionButton.Item buttonColor='#3498db' title='Beri Review' onPress={() => this.setState({ modalVisible: !modalVisible })}>
             <Icon name='md-star' style={styles.actionButtonIcon} />
           </ActionButton.Item>
