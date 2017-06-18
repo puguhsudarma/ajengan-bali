@@ -14,7 +14,6 @@ import {
   Button,
   List,
   ListItem,
-  Thumbnail,
   Card,
   CardItem,
   Input,
@@ -24,88 +23,41 @@ import StarRating from 'react-native-star-rating';
 import {
   Image,
   TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modal';
 import getDirections from 'react-native-google-maps-directions';
+import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 import {
   TitleCard,
   Alert,
-  GeoLocation,
 } from '../components';
-//images
-import profileImage from '../images/avatar5.png';
-import warung1 from '../images/warung1.jpg';
-import button1 from '../images/1.png';
-import button2 from '../images/2.png';
-import button3 from '../images/3.png';
-import button4 from '../images/4.png';
 
-export default class DetailWarung extends Component {
+export default class DetailMakanan extends Component {
   constructor(props) {
     super(props);
     this.state = {
       header: {
-        title: 'Detail Warung',
+        title: 'Detail Makanan',
         subtitle: 'Ajegli App',
       },
       maxRating: 5,
+      detailMakanan: {
+        nama: 'Nasi Be Guling',
+        kategori: 'Masakan Babi Guling',
+        harga: 17000,
+        deskripsi: 'Berisikan nasi, babi guling, lawar, dan sate be guling.',
+        rating: 3.4,
+        gambar: { uri: 'https://cdn.water-sport-bali.com/wp-content/uploads/2012/11/menu-ibu-oka-ubud.jpg' },
+      },
       detailWarung: {
         nama: 'Warung Bu Candra',
         daerah: 'Denpasar Utara',
         range: 0.3,
-        rating: 3.4,
-        gambar: warung1,
         alamat: 'Jln. Gatsu Barat, Sebelah Hotel Tulip',
-        deskripsi: 'Menyediakan berbagai masakan khas Bali.',
       },
-      dataMakanan: [
-        {
-          nama: 'Be Guling',
-          rating: 3.4,
-          gambar: profileImage,
-        },
-        {
-          nama: 'Sobi',
-          rating: 4.5,
-          gambar: button1,
-        },
-        {
-          nama: 'Sate Babi',
-          rating: 3.7,
-          gambar: button2,
-        },
-        {
-          nama: 'Lawar',
-          rating: 3.5,
-          gambar: button3,
-        },
-        {
-          nama: 'Nasi Campur Lawar',
-          rating: 4.4,
-          gambar: button4,
-        },
-        {
-          nama: 'Lawar',
-          rating: 4.8,
-          gambar: profileImage,
-        },
-        {
-          nama: 'Sate Celeng',
-          rating: 4.9,
-          gambar: button2,
-        },
-        {
-          nama: 'Lawar',
-          rating: 5.0,
-          gambar: button4,
-        },
-        {
-          nama: 'Lawar',
-          rating: 3.9,
-          gambar: profileImage,
-        },
-      ],
       review: [
         {
           nama: 'Gung Wah',
@@ -149,15 +101,46 @@ export default class DetailWarung extends Component {
   }
 
   componentDidMount() {
-    GeoLocation((position) => {
-      this.setState({ myCoord: position.coords, coordSuccess: true, });
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+        .then(granted => {
+          console.log(granted);
+          if (granted) this.watchLocation();
+        });
+    } else {
+      this.watchLocation();
+    }
+  }
+
+  watchLocation = () => {
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href="#">Learn more</a>',
+      ok: 'YES',
+      cancel: 'NO',
+    }).then((success) => {
+      console.log(success);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log(position.coords);
+          this.setState({ myCoord: position.coords, coordSuccess: true, });
+        },
+        (err) => {
+          Alert(err.message);
+          console.log(err);
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      );
+    }).catch((err) => {
+      Alert('Geolocation harus diaktifkan.');
+      console.log(err);
     });
   }
 
   handleGetDirections = () => {
-    if (!this.state.coordSuccess) return Alert('Geolocation tidak ditemukan.');
+    if(!this.state.coordSuccess) return Alert('Geolocation tidak ditemukan.');
+
     const { latitude, longitude } = this.state.myCoord;
-    getDirections({
+    const data = {
       source: {
         latitude,
         longitude,
@@ -166,7 +149,14 @@ export default class DetailWarung extends Component {
         latitude: -8.648222,
         longitude: 115.225591,
       },
-    });
+      // params: [
+      //   {
+      //     key: 'dirflg',
+      //     value: 'w',
+      //   },
+      // ],
+    };
+    getDirections(data);
   }
 
   review = () => {
@@ -192,38 +182,6 @@ export default class DetailWarung extends Component {
     );
   }
 
-  makanan = () => {
-    const data = [...this.state.dataMakanan];
-    const { navigate } = this.props.navigation;
-    return (
-      <List dataArray={data} renderRow={item =>
-        <ListItem thumbnail onPress={() => navigate('detailMakanan', { fromWarungPage: true, })}>
-          <Left>
-            <Thumbnail square size={80} source={item.gambar} />
-          </Left>
-          <Body>
-            <Text>{item.nama}</Text>
-            <View style={{ width: 100, marginTop: 5, }}>
-              <StarRating
-                starSize={15}
-                disabled={true}
-                maxStars={this.state.maxRating}
-                rating={item.rating}
-                starColor={'#FFDF00'}
-              />
-            </View>
-          </Body>
-          <Right>
-            <Button transparent onPress={() => navigate('detailMakanan', { fromWarungPage: true, })}>
-              <Text>View</Text>
-            </Button>
-          </Right>
-        </ListItem>
-      } />
-    );
-  }
-
-  // modal function
   onStarRatingPress = (rating) => {
     this.setState(prevState => ({
       modalInputTemp: {
@@ -260,10 +218,18 @@ export default class DetailWarung extends Component {
     }));
   }
 
+  numberWithCommas = (x) => {
+    var parts = x.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return parts.join('.');
+  }
+
   render() {
-    const { header, modalVisible, maxRating, modalInputTemp, detailWarung } = this.state;
-    const { nama, alamat, daerah, deskripsi, gambar, range, rating } = detailWarung;
-    const { goBack } = this.props.navigation;
+    const { header, modalVisible, maxRating, modalInputTemp, detailMakanan, detailWarung, coordSuccess } = this.state;
+    const { nama, deskripsi, gambar, rating, harga, kategori } = detailMakanan;
+    const { nama: namaWarung, alamat, daerah, range } = detailWarung;
+    const { fromWarungPage } = this.props.navigation.state.params;
+    const { goBack, navigate } = this.props.navigation;
 
     return (
       <Container>
@@ -299,16 +265,12 @@ export default class DetailWarung extends Component {
               />
             </CardItem>
             <CardItem>
-              <Icon active style={{ color: 'brown' }} name="bus" />
-              <Text>{range}{' Km'}</Text>
+              <Icon active style={{ color: 'brown' }} name="md-browsers" />
+              <Text>{kategori}</Text>
             </CardItem>
             <CardItem>
-              <Icon active style={{ color: 'blue' }} name="pin" />
-              <Text>{daerah}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'green' }} name="md-map" />
-              <Text>{alamat}</Text>
+              <Icon active style={{ color: 'green' }} name="md-cash" />
+              <Text>{'Rp. '}{this.numberWithCommas(harga)}</Text>
             </CardItem>
             <CardItem>
               <Icon active style={{ color: 'red' }} name="list" />
@@ -327,24 +289,52 @@ export default class DetailWarung extends Component {
           </Card>
 
           <Card style={styles.card}>
-            <CardItem header>
-              <TitleCard>Daftar Menu Makanan</TitleCard>
+            <CardItem>
+              <Body>
+                <TitleCard>Informasi Warung</TitleCard>
+              </Body>
             </CardItem>
-            {this.makanan()}
+            <CardItem>
+              <Icon active style={{ color: 'green' }} name="home" />
+              <Text>{namaWarung}</Text>
+            </CardItem>
+            <CardItem>
+              <Icon active style={{ color: 'brown' }} name="bus" />
+              <Text>{range}{' Km'}</Text>
+            </CardItem>
+            <CardItem>
+              <Icon active style={{ color: 'blue' }} name="pin" />
+              <Text>{daerah}</Text>
+            </CardItem>
+            <CardItem>
+              <Icon active style={{ color: 'green' }} name="md-map" />
+              <Text>{alamat}</Text>
+            </CardItem>
+            {
+              !fromWarungPage &&
+              <CardItem>
+                <Icon active style={{ color: 'green' }} name="md-book" />
+                <Button rounded onPress={() => navigate('detailWarung')}>
+                  <Text>Halaman Warung</Text>
+                </Button>
+              </CardItem>
+            }
           </Card>
 
           <Card style={styles.card}>
             <CardItem header>
-              <TitleCard>Review Warung</TitleCard>
+              <TitleCard>Review Makanan</TitleCard>
             </CardItem>
             {this.review()}
           </Card>
         </Content>
 
         <ActionButton buttonColor='rgba(231,76,60,1)'>
-          <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
-            <Icon name='md-map' style={styles.actionButtonIcon} />
-          </ActionButton.Item>
+          
+            <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
+              <Icon name='md-map' style={styles.actionButtonIcon} />
+            </ActionButton.Item>
+          
           <ActionButton.Item buttonColor='#3498db' title='Beri Review' onPress={() => this.setState({ modalVisible: !modalVisible })}>
             <Icon name='md-star' style={styles.actionButtonIcon} />
           </ActionButton.Item>
