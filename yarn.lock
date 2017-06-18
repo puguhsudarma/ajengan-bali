@@ -3384,6 +3384,10 @@ react-native-action-button@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/react-native-action-button/-/react-native-action-button-2.6.10.tgz#eaf0b4045c7e9fe8b7435773a6c90eb7b8bbb0dd"
 
+react-native-android-location-services-dialog-box@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-android-location-services-dialog-box/-/react-native-android-location-services-dialog-box-1.2.2.tgz#78142c0d5b099232278b3b8db3daa4788019286a"
+
 react-native-animatable@^1.2.0:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.2.2.tgz#a873550e6f7cb95f90baf46b9eb15b1ab56425cb"

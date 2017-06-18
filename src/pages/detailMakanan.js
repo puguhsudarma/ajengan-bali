@@ -28,7 +28,9 @@ import ActionButton from 'react-native-action-button';
 import Modal from 'react-native-modal';
 import getDirections from 'react-native-google-maps-directions';
 import {
-  TitleCard
+  TitleCard,
+  Alert,
+  GeoLocation,
 } from '../components';
 
 export default class DetailMakanan extends Component {
@@ -91,27 +93,30 @@ export default class DetailMakanan extends Component {
         star: 0,
         desc: '',
       },
+      coordSuccess: false,
+      myCoord: null,
     };
   }
 
+  componentDidMount() {
+    GeoLocation((position) => {
+      this.setState({ myCoord: position.coords, coordSuccess: true });
+    });
+  }
+
   handleGetDirections = () => {
-    const data = {
+    if (!this.state.coordSuccess) return Alert('Geolocation tidak ditemukan.');
+    const { latitude, longitude } = this.state.myCoord;
+    getDirections({
       source: {
-        latitude: -8.685324,
-        longitude: 115.211429,
+        latitude,
+        longitude,
       },
       destination: {
         latitude: -8.648222,
         longitude: 115.225591,
       },
-      // params: [
-      //   {
-      //     key: 'dirflg',
-      //     value: 'w',
-      //   },
-      // ],
-    };
-    getDirections(data);
+    });
   }
 
   review = () => {
@@ -137,6 +142,13 @@ export default class DetailMakanan extends Component {
     );
   }
 
+  numberWithCommas = (x) => {
+    var parts = x.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return parts.join('.');
+  }
+  
+  // modal function
   onStarRatingPress = (rating) => {
     this.setState(prevState => ({
       modalInputTemp: {
@@ -171,12 +183,6 @@ export default class DetailMakanan extends Component {
       },
       modalVisible: !prevState.modalVisible,
     }));
-  }
-
-  numberWithCommas = (x) => {
-    var parts = x.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    return parts.join('.');
   }
 
   render() {
@@ -266,15 +272,13 @@ export default class DetailMakanan extends Component {
               <Text>{alamat}</Text>
             </CardItem>
             {
-              !fromWarungPage ?
-                <CardItem>
-                  <Icon active style={{ color: 'green' }} name="md-book" />
-                  <Button rounded onPress={() => navigate('detailWarung')}>
-                    <Text>Halaman Warung</Text>
-                  </Button>
-                </CardItem>
-                :
-                null
+              !fromWarungPage &&
+              <CardItem>
+                <Icon active style={{ color: 'green' }} name="md-book" />
+                <Button rounded onPress={() => navigate('detailWarung')}>
+                  <Text>Halaman Warung</Text>
+                </Button>
+              </CardItem>
             }
           </Card>
 
@@ -287,9 +291,11 @@ export default class DetailMakanan extends Component {
         </Content>
 
         <ActionButton buttonColor='rgba(231,76,60,1)'>
+
           <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
             <Icon name='md-map' style={styles.actionButtonIcon} />
           </ActionButton.Item>
+
           <ActionButton.Item buttonColor='#3498db' title='Beri Review' onPress={() => this.setState({ modalVisible: !modalVisible })}>
             <Icon name='md-star' style={styles.actionButtonIcon} />
           </ActionButton.Item>
