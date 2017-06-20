@@ -4,6 +4,7 @@ import Pendaftaran from './pendaftaran';
 import Dashboard from './dashboard';
 import DetailWarung from './detailWarung';
 import DetailMakanan from './detailMakanan';
+import GeoMap from './geoMap';
 
 export {
   Splash,
@@ -12,4 +13,5 @@ export {
   Dashboard,
   DetailWarung,
   DetailMakanan,
+  GeoMap,
 };
