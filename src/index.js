@@ -6,6 +6,8 @@ import {
   Splash,
   DetailWarung,
   DetailMakanan,
+  GeoMap,
+  Search,
 } from './pages';
 import { StackNavigator } from 'react-navigation';
 
@@ -35,14 +37,26 @@ const SimaluApp = StackNavigator(
     //     header: null
     //   }
     // },
-    detailWarung: {
-      screen: DetailWarung,
-      navigationOptions: {
-        header: null
-      }
-    },
-    detailMakanan:{
-      screen: DetailMakanan,
+    // detailWarung: {
+    //   screen: DetailWarung,
+    //   navigationOptions: {
+    //     header: null
+    //   }
+    // },
+    // detailMakanan: {
+    //   screen: DetailMakanan,
+    //   navigationOptions: {
+    //     header: null
+    //   }
+    // },
+    // geoMap: {
+    //   screen: GeoMap,
+    //   navigationOptions: {
+    //     header: null
+    //   }
+    // },
+    search: {
+      screen: Search,
       navigationOptions: {
         header: null
       }
