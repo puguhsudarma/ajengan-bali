@@ -9,14 +9,19 @@ import {
   Right,
   Icon,
   Button,
+  Text,
+  Thumbnail,
 } from 'native-base';
 import {
   StyleSheet,
   View,
+  Dimensions,
 } from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
 
-import MapView from 'react-native-maps';
+import warung from '../images/warung1.jpg';
 
+const { width: WIDTH } = Dimensions.get('window');
 export default class GeoMap extends Component {
   constructor(props) {
     super(props);
@@ -33,20 +38,25 @@ export default class GeoMap extends Component {
       },
       markers: [
         {
-          latlng: {
+          coordinate: {
             latitude: -8.6758,
             longitude: 115.09000,
           },
-          title: 'Ini Title 1',
-          description: 'Ini adalah deskripsi dari tempat tersebut 90.',
+          info: {
+            title: 'Warung Bu Candra',
+            image: warung,
+          },
         },
         {
-          latlng: {
+          coordinate: {
             latitude: -8.6110,
             longitude: 115.2990,
           },
-          title: 'Ini Title',
-          description: 'Ini adalah deskripsi dari tempat tersebut.',
+          info: {
+            title: 'Warung Nasi Singaraja',
+            image: { uri: 'http://lorempixel.com/400/200/' },
+          },
+
         },
       ],
     };
@@ -66,7 +76,7 @@ export default class GeoMap extends Component {
         <Header>
           <Left>
             <Button transparent onPress={() => goBack()}>
-              <Icon name="arrow-round-back" />
+              <Icon name="menu" />
             </Button>
           </Left>
           <Body>
@@ -75,7 +85,7 @@ export default class GeoMap extends Component {
           </Body>
           <Right>
             <Button transparent onPress={() => { }}>
-              <Icon name='search' />
+              <Icon name='refresh' />
             </Button>
           </Right>
         </Header>
@@ -85,19 +95,26 @@ export default class GeoMap extends Component {
             style={mapsStyle.map}
             region={regionMap}
             onRegionChange={this.onRegionChange}
+            showsUserLocation={true}
+            loadingEnabled={true}
           >
             {
               markers.map((marker, index) =>
-                <MapView.Marker
+                <Marker
                   key={index}
-                  coordinate={marker.latlng}
-                  title={marker.title}
-                  description={marker.description}
+                  {...marker}
                 >
-                  <MapView.Callout>
-
-                  </MapView.Callout>
-                </MapView.Marker>
+                  <Callout>
+                    <View>
+                      <Thumbnail
+                        square
+                        style={{ height: 200, width: WIDTH-50, marginTop: 20, }}
+                        source={marker.info.image}
+                      />
+                      <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: '600', marginTop: 10, marginBottom: 10, }}>{marker.info.title}</Text>
+                    </View>
+                  </Callout>
+                </Marker>
               )
             }
           </MapView>

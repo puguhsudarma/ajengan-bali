@@ -7,6 +7,7 @@ import {
   DetailWarung,
   DetailMakanan,
   GeoMap,
+  Search,
 } from './pages';
 import { StackNavigator } from 'react-navigation';
 
@@ -48,8 +49,14 @@ const SimaluApp = StackNavigator(
     //     header: null
     //   }
     // },
-    geoMap: {
-      screen: GeoMap,
+    // geoMap: {
+    //   screen: GeoMap,
+    //   navigationOptions: {
+    //     header: null
+    //   }
+    // },
+    search: {
+      screen: Search,
       navigationOptions: {
         header: null
       }
