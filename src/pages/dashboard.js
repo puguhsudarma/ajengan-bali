@@ -107,6 +107,7 @@ export default class Dashboard extends Component {
           daerah: 'Denpasar Utara',
           range: 0.3,
           rating: 3.4,
+          kategori: 'Babi',
           gambar: profileImage,
         },
         {
@@ -114,6 +115,7 @@ export default class Dashboard extends Component {
           daerah: 'Denpasar Selatan',
           range: 1.2,
           rating: 4.5,
+          kategori: 'Babi',
           gambar: button1,
         },
         {
@@ -121,6 +123,7 @@ export default class Dashboard extends Component {
           daerah: 'Denpasar Utara',
           range: 2.5,
           rating: 3.7,
+          kategori: 'Babi',
           gambar: button2,
         },
         {
@@ -128,6 +131,7 @@ export default class Dashboard extends Component {
           daerah: 'Badung Sangeh',
           range: 10.1,
           rating: 3.5,
+          kategori: 'Lawar',
           gambar: button3,
         },
         {
@@ -135,6 +139,7 @@ export default class Dashboard extends Component {
           daerah: 'Badung Sangeh',
           range: 6.5,
           rating: 4.4,
+          kategori: 'Lawar',
           gambar: button4,
         },
         {
@@ -142,6 +147,7 @@ export default class Dashboard extends Component {
           daerah: 'Badung Sangeh',
           range: 0.2,
           rating: 4.8,
+          kategori: 'Lawar',
           gambar: profileImage,
         },
         {
@@ -149,6 +155,7 @@ export default class Dashboard extends Component {
           daerah: 'Denpasar Utara',
           range: 0.1,
           rating: 4.9,
+          kategori: 'Babi',
           gambar: button2,
         },
         {
@@ -156,6 +163,7 @@ export default class Dashboard extends Component {
           daerah: 'Badung Sangeh',
           range: 2.1,
           rating: 5.0,
+          kategori: 'Lawar',
           gambar: button4,
         },
         {
@@ -163,6 +171,7 @@ export default class Dashboard extends Component {
           daerah: 'Badung Sangeh',
           range: 1.5,
           rating: 3.9,
+          kategori: 'Lawar',
           gambar: profileImage,
         },
       ],
@@ -213,6 +222,7 @@ export default class Dashboard extends Component {
           </Left>
           <Body>
             <Text>{item.nama}</Text>
+            <Text note><Icon name="folder" style={{ fontSize: 14, color: 'gray' }} /> Kategori : {item.kategori}</Text>
             <Text note><Icon name="pin" style={{ fontSize: 14, color: 'gray' }} /> {item.daerah}</Text>
             <Text note><Icon name="bus" style={{ fontSize: 14, color: 'gray' }} /> Jarak : {item.range} Km</Text>
             <View style={{ width: 100, marginTop: 5, }}>
@@ -236,6 +246,7 @@ export default class Dashboard extends Component {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
     const { titleHeader, subtitleHeader } = this.state;
     return (
       <Container>
@@ -253,7 +264,7 @@ export default class Dashboard extends Component {
             <Button transparent onPress={() => { }}>
               <Icon name='refresh' />
             </Button>
-            <Button transparent onPress={() => { }}>
+            <Button transparent onPress={() => navigate('search')}>
               <Icon name='search' />
             </Button>
           </Right>

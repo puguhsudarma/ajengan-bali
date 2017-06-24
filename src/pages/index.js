@@ -6,6 +6,7 @@ import DetailWarung from './detailWarung';
 import DetailMakanan from './detailMakanan';
 import GeoMap from './geoMap';
 import Search from './search';
+
 export {
   Splash,
   Login,
