@@ -252,7 +252,7 @@ export default class Dashboard extends Component {
       <Container>
         <Header hasTabs={true}>
           <Left>
-            <Button transparent onPress={() => { }}>
+            <Button transparent onPress={() => navigate('DrawerOpen')}>
               <Icon name="menu" />
             </Button>
           </Left>

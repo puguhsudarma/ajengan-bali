@@ -269,6 +269,7 @@ export default class Dashboard extends Component {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
     const { header, listCategory, jenisData, cat, jenis, query, clickedCari, } = this.state;
     const { title, subtitle } = header;
 
@@ -277,7 +278,7 @@ export default class Dashboard extends Component {
       <Container>
         <Header>
           <Left>
-            <Button transparent onPress={() => { }}>
+            <Button transparent onPress={() => navigate('DrawerOpen')}>
               <Icon name="menu" />
             </Button>
           </Left>

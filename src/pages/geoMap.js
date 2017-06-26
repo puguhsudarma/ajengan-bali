@@ -70,12 +70,12 @@ export default class GeoMap extends Component {
   render() {
     const { header, regionMap, markers } = this.state;
     const { subtitle, title } = header;
-    const { goBack } = this.props.navigation;
+    const { goBack, navigate } = this.props.navigation;
     return (
       <Container>
         <Header>
           <Left>
-            <Button transparent onPress={() => goBack()}>
+            <Button transparent onPress={() => navigate('DrawerOpen')}>
               <Icon name="menu" />
             </Button>
           </Left>

@@ -3,6 +3,7 @@ import TitleCard from './titleCard';
 // import ModalReview from './modalReview'; // --> masih belum selesai, gak ngerti caranya...
 import { Alert, AlertGrav, } from './alert';
 import GeoLocation from './getCoordGps';
+import Drawer from './drawer';
 
 export {
   // FadeInView, // --> gak pernah dipake, mungkin akan dihapus...
@@ -11,4 +12,5 @@ export {
   Alert,
   AlertGrav,
   GeoLocation,
+  Drawer,
 };

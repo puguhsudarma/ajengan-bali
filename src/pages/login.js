@@ -16,18 +16,30 @@ export default class Login extends Component {
   }
 
   login = () => {
-    const { dispatch } = this.props.navigation;
+    const { dispatch, navigate, } = this.props.navigation;
     // const { username, password } = this.state;
     // const pattern = {
     //   username: 'user',
     //   password: 'user',
     // };
-    dispatch(NavigationActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'dashboard' })
-      ],
-    }));
+
+    // dispatch(NavigationActions.reset({
+    //   index: 0,
+    //   actions: [
+    //     NavigationActions.navigate({ routeName: 'Authorized' })
+    //   ],
+    // }));
+
+    navigate(
+      'Authorized',
+      {},
+      NavigationActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'dashboard' })
+        ],
+      })
+    );
 
     // if (username == pattern.username && password == pattern.password) {
     //   this.setState({ msg: '' });

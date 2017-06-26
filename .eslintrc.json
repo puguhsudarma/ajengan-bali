@@ -5,7 +5,10 @@
         "browser": true
     },
     "parser": "babel-eslint",
-    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
     "parserOptions": {
         "ecmaVersion": 6,
         "ecmaFeatures": {
@@ -45,7 +48,13 @@
                 "ignoreRestSiblings": false
             }
         ],
-        "camelcase":"warn",
-        "react/prop-types": "off"
+        "camelcase": "warn",
+        "react/prop-types": "off",
+        "react/display-name": [
+            "off",
+            {
+                "ignoreTranspilerName": false
+            }
+        ]
     }
 }
