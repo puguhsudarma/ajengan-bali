@@ -1,18 +1,18 @@
 import { StackNavigator } from 'react-navigation';
 import AUTH_ROUTER from './authRoute';
-// import UNAUTH_ROUTER from './unAuthRoute';
+import UNAUTH_ROUTER from './unAuthRoute';
 
 const SIMALU_APP = StackNavigator(
   {
-    // UnAuthorized: {
-    //   screen: UNAUTH_ROUTER,
-    // },
+    UnAuthorized: {
+      screen: UNAUTH_ROUTER,
+    },
     Authorized: {
       screen: AUTH_ROUTER,
     },
   },
   {
-    // initialRouteName: 'UnAuthorized',
+    initialRouteName: 'UnAuthorized',
     headerMode: 'none',
   }
 );

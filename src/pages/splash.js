@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import {
+  StyleSheet,
+  Text,
+  View,
+  AsyncStorage,
+} from 'react-native';
+import {
+  Spinner,
+} from 'native-base';
 import { NavigationActions } from 'react-navigation';
+import { GeoLocation, } from '../components';
 
 export default class Splash extends Component {
   constructor(props) {
@@ -12,37 +20,44 @@ export default class Splash extends Component {
     };
   }
 
-  componentWillMount(){
-    const { dispatch } = this.props.navigation;
-    setTimeout(() => {
-      dispatch(NavigationActions.reset({
-        index: 0,
-        actions: [
-          NavigationActions.navigate({routeName: 'login'})
-        ],
-      }));
-    }, 1000);
+  componentWillMount() {
+    // const { dispatch } = this.props.navigation;
+    // setTimeout(() => {
+    //   dispatch(NavigationActions.reset({
+    //     index: 0,
+    //     actions: [
+    //       NavigationActions.navigate({routeName: 'login'})
+    //     ],
+    //   }));
+    // }, 1000);
+    // const SETTING_KEY = 'position';
+    GeoLocation(
+      position => {
+        console.log(position);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   render() {
     const { title, subtitle } = this.state;
     return (
-      <LinearGradient
-        start={{ x: 0.1, y: 0.1 }} end={{ x: 0.7, y: 0.9 }}
-        colors={['#4B79A1', '#283E51']}
-        style={styles.wrapper}>
+      <View style={styles.wrapper}>
         <View style={styles.titleWrapper}>
           <Text style={styles.title}>{title.toUpperCase()}</Text>
+          <Spinner />
         </View>
         <Text style={styles.subtitle}>{subtitle}</Text>
-      </LinearGradient>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#27ae60',
+    backgroundColor: '#3498db',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
