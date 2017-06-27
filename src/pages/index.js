@@ -6,6 +6,7 @@ import DetailWarung from './detailWarung';
 import DetailMakanan from './detailMakanan';
 import GeoMap from './geoMap';
 import Search from './search';
+import Profile from './profile';
 
 export {
   Splash,
@@ -16,4 +17,5 @@ export {
   DetailMakanan,
   GeoMap,
   Search,
+  Profile,
 };

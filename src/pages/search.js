@@ -354,7 +354,7 @@ const styles = {
   },
 
   cardContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 5,
+    marginRight: 5,
   }
 };
