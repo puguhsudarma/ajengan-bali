@@ -14,15 +14,15 @@ import {
   Item,
   Input,
   Button,
+  View,
 } from 'native-base';
-import LinearGradient from 'react-native-linear-gradient';
 
 export default class Pendaftaran extends Component {
   constructor(props) {
     super(props);
     this.state = {
       titleHeader: 'Pendaftaran',
-      subtitleHeader: 'Ajegli App',
+      subtitleHeader: 'Ajegli',
       
       namaLengkap: '',
       username: '',
@@ -54,10 +54,7 @@ export default class Pendaftaran extends Component {
           </Body>
           <Right />
         </Header>
-        <LinearGradient
-          start={{ x: 0.1, y: 0.4 }} end={{ x: 0.7, y: 0.9 }}
-          colors={['#4B79A1', '#283E51']}
-          style={styles.content}>
+        <View style={styles.content}>
           <Content>
             <Form style={styles.form}>
               <Item regular style={styles.textInputTop}>
@@ -118,7 +115,7 @@ export default class Pendaftaran extends Component {
               </Button>
             </Form>
           </Content>
-        </LinearGradient>
+        </View>
       </Container>
     );
   }
@@ -126,11 +123,11 @@ export default class Pendaftaran extends Component {
 
 const styles = {
   content: {
-    backgroundColor: '#27ae60',
+    backgroundColor: '#3498db',
     flex: 1,
   },
   header: {
-    backgroundColor: '#4B79A1',
+    backgroundColor: '#3498db',
   },
   subtitle: {
     color: '#fff'

@@ -1,18 +1,31 @@
 import { StackNavigator } from 'react-navigation';
+import {
+  Login,
+  Pendaftaran,
+  Splash,
+} from '../pages';
 import AUTH_ROUTER from './authRoute';
-// import UNAUTH_ROUTER from './unAuthRoute';
 
 const SIMALU_APP = StackNavigator(
   {
-    // UnAuthorized: {
-    //   screen: UNAUTH_ROUTER,
-    // },
+    splash: {
+      screen: Splash,
+    },
+    login: {
+      screen: Login,
+    },
+    pendaftaran: {
+      screen: Pendaftaran,
+    },
     Authorized: {
       screen: AUTH_ROUTER,
     },
   },
   {
-    // initialRouteName: 'UnAuthorized',
+    initialRouteName: 'splash',
+    navigationOptions: {
+      header: null,
+    },
     headerMode: 'none',
   }
 );

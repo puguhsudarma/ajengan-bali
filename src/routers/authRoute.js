@@ -12,27 +12,27 @@ import {
 
 const AUTH_ROUTER = DrawerNavigator(
   {
-    // dashboard: {
-    //   screen: Dashboard,
-    // },
-    // detailWarung: {
-    //   screen: DetailWarung,
-    // },
-    // detailMakanan: {
-    //   screen: DetailMakanan,
-    // },
-    // geoMap: {
-    //   screen: GeoMap,
-    // },
-    // search: {
-    //   screen: Search,
-    // },
+    dashboard: {
+      screen: Dashboard,
+    },
+    detailWarung: {
+      screen: DetailWarung,
+    },
+    detailMakanan: {
+      screen: DetailMakanan,
+    },
+    geoMap: {
+      screen: GeoMap,
+    },
+    search: {
+      screen: Search,
+    },
     profile: {
       screen: Profile,
     },    
   },
   {
-    // initialRouteName: 'dashboard',
+    initialRouteName: 'dashboard',
     navigationOptions: {
       header: null,
     },
