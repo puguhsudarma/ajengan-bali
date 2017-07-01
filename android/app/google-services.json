@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "301126244495",
+    "firebase_url": "https://ajengan-bali.firebaseio.com",
+    "project_id": "ajengan-bali",
+    "storage_bucket": "ajengan-bali.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:301126244495:android:11e2d47c41435a38",
+        "android_client_info": {
+          "package_name": "com.ajenganbaliapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "301126244495-qrl204h48jmtnknav5lulqgkucvuh3dk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ajenganbaliapp",
+            "certificate_hash": "4bec51c35d62fcad0c0ce4fc0af9520601b9e8d5"
+          }
+        },
+        {
+          "client_id": "301126244495-d81divh6ub5sk53cgmrd2rthcp4a1a3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXkswBzXY9GKCOSTI8onAWCjTH4FdXaqo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "301126244495-d81divh6ub5sk53cgmrd2rthcp4a1a3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
