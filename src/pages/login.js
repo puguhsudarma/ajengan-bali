@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { AsyncStorage, TouchableOpacity, } from 'react-native';
-import { Text, Form, Item, Input, Button, View, Icon } from 'native-base';
-import Hr from 'react-native-hr';
+import { TouchableOpacity, } from 'react-native';
+import { Text, Form, Item, Input, Button, View, Icon, Spinner, } from 'native-base';
+// import Hr from 'react-native-hr';
 import { NavigationActions } from 'react-navigation';
+import { loginWithEmailPassword, } from '../firebase/auth';
 
 export default class Login extends Component {
   constructor(props) {
@@ -12,36 +13,41 @@ export default class Login extends Component {
       msg: '',
       username: '',
       password: '',
+      loading: false,
     };
   }
 
   login = () => {
+    this.setState({ loading: true });
     const { dispatch, } = this.props.navigation;
-    // const { username, password } = this.state;
-    // const pattern = {
-    //   username: 'user',
-    //   password: 'user',
-    // };
+    const { username, password } = this.state;
 
-    dispatch(NavigationActions.reset({
-      index: 0,
-      actions: [
-        NavigationActions.navigate({ routeName: 'Authorized' })
-      ],
-    }));
+    // validate
+    if (username === '' || password === '') {
+      this.setState({ msg: 'Username dan password tidak boleh kosong!' });
+      this.setState({ loading: false });
+      return;
+    }
 
-    // if (username == pattern.username && password == pattern.password) {
-    //   this.setState({ msg: '' });
-
-    // } else {
-    //   this.setState({ msg: 'Username atau password salah!' });
-    // }
+    loginWithEmailPassword(username, password)
+      .then(() => {
+        dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [
+            NavigationActions.navigate({ routeName: 'Authorized' })
+          ],
+        }));
+        return;
+      })
+      .catch(() => {
+        this.setState({ msg: 'Username atau password salah!' });
+        this.setState({ loading: false });
+      });
   }
 
   render() {
-    AsyncStorage.getItem('user@coordinate').then(val => console.log(JSON.parse(val)));
     const { navigate } = this.props.navigation;
-    const { title, msg } = this.state;
+    const { title, msg, loading } = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.titleContainer}>
@@ -50,9 +56,10 @@ export default class Login extends Component {
         <View style={styles.formContainer}>
           <Text style={styles.textMsg}>{msg}</Text>
           <Form>
-            <Item regular style={styles.textInputEmail}>
+            <Item regular disabled={loading} style={styles.textInputEmail}>
               <Icon name="mail" />
               <Input
+                disabled={loading}
                 placeholder="Email"
                 keyboardType="email-address"
                 onChange={
@@ -61,9 +68,10 @@ export default class Login extends Component {
                 returnKeyType="next"
               />
             </Item>
-            <Item regular style={styles.textInputPassword}>
+            <Item regular disabled={loading} style={styles.textInputPassword}>
               <Icon name="key" />
               <Input
+                disabled={loading}
                 placeholder="Password"
                 secureTextEntry
                 onChange={
@@ -75,26 +83,30 @@ export default class Login extends Component {
                 }
               />
             </Item>
-            <Button iconLeft block rounded onPress={() => this.login()} style={styles.buttonSignIn}>
-              <Icon name="return-right" />
+            <Button iconLeft block rounded disabled={loading} onPress={() => this.login()} style={styles.buttonSignIn}>
+              {
+                loading ?
+                  <Spinner color='#fff' /> :
+                  <Icon name="return-right" />
+              }
               <Text>Masuk</Text>
             </Button>
           </Form>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 30, }}>
             <Text style={styles.textSignUp}>Belum punya akun ?&nbsp;</Text>
-            <TouchableOpacity style={{ backgroundColor: '#fff', padding: 5, borderRadius: 5, }} onPress={() => navigate('pendaftaran')}>
+            <TouchableOpacity disabled={loading} style={{ backgroundColor: '#fff', padding: 5, borderRadius: 5, }} onPress={() => navigate('pendaftaran')}>
               <Text style={styles.textLinkSignup}>
                 Daftar sekarang
               </Text>
             </TouchableOpacity>
           </View>
 
-          <Hr lineColor={'#fff'} text='Atau Masuk Dengan' textColor='#fff' />
-          <Button block iconLeft rounded onPress={() => { }} style={styles.buttonGmail}>
+          {/*<Hr lineColor={'#fff'} text='Atau Masuk Dengan' textColor='#fff' />
+          <Button disabled={loading} block iconLeft rounded onPress={() => {}} style={styles.buttonGmail}>
             <Icon name="logo-google" />
             <Text>Gmail</Text>
-          </Button>
+          </Button>*/}
         </View>
       </View>
     );

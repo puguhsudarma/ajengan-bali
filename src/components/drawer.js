@@ -10,7 +10,7 @@ class Drawer extends Component {
   }
 
   render() {
-    const { property } = this.props;
+    const { property, name, email, } = this.props;
     return (
       <ScrollView>
         <Image source={backgroundDrawer} style={{
@@ -33,8 +33,8 @@ class Drawer extends Component {
               borderColor: '#fff',
               borderWidth: 1,
             }} />
-            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16, }}>I Wayan Puguh Sudarma</Text>
-            <Text style={{ color: '#fff', }}>wayanpuguhsudarma@gmail.com</Text>
+            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16, }}>{name}</Text>
+            <Text style={{ color: '#fff', }}>{email}</Text>
           </View>
         </Image>
         <DrawerItems {...property} />

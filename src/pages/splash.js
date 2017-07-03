@@ -9,7 +9,7 @@ import {
   Spinner,
 } from 'native-base';
 import { NavigationActions } from 'react-navigation';
-import { GeoLocation, } from '../components';
+import { GeoLocation, Alert as Toast } from '../components';
 import { checkLogin, } from '../firebase/auth';
 
 const RED = '#e74c3c';
@@ -27,46 +27,43 @@ export default class Splash extends Component {
     };
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const { dispatch } = this.props.navigation;
-
     // Get Geolocation
     // ----------------------
-    const geo = () => GeoLocation()
-      .then(res => {
+    try {
+      const res = await GeoLocation();
+      if (res) {
         const obj = {
           lat: res.coords.latitude,
           long: res.coords.longitude,
         };
 
-        AsyncStorage.setItem('@user:coordinate', JSON.stringify(obj))
-          .then(() => this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN }))
-          .catch(err => console.log(err));
-      })
-      .catch(err => {
-        this.setState({ msg: err.msg, colorMsg: RED });
-      });
+        const setStore = await AsyncStorage.setItem('@user:coordinate', JSON.stringify(obj));
+        if (setStore) {
+          this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN });
+        }
+      }
+    } catch (err) {
+      this.setState({ msg: err, colorMsg: RED });
+      console.log(err);
+    }
 
-    // Check if Login
+    // Check current session
     // ----------------------
-    Promise.all([geo, AsyncStorage.getItem('@user:loggedIn'), checkLogin()])
-      .then(data => {
-        this.setState({
-          msg: 'Menyiapkan aplikasi...',
-          colorMsg: WHITE,
-        });
-        setTimeout(() => {
-          dispatch(NavigationActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: data[1] || data[2] ? 'Authorized' : 'login' })
-            ],
-          }));
-        }, 100);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const check = await checkLogin();
+      this.setState({ msg: 'Menyiapkan aplikasi...', colorMsg: WHITE, });
+      setTimeout(() => {
+        dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: check ? 'Authorized' : 'login' })],
+        }));
+      }, 100);
+    } catch (err) {
+      this.setState({ msg: err, colorMsg: RED });
+      console.log(err);
+    }
   }
 
   render() {
