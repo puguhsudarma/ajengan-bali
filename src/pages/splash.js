@@ -3,18 +3,13 @@ import {
   StyleSheet,
   Text,
   View,
-  AsyncStorage,
 } from 'react-native';
 import {
   Spinner,
 } from 'native-base';
 import { NavigationActions } from 'react-navigation';
-import { GeoLocation, Alert as Toast } from '../components';
+import { GeoLocation, } from '../components';
 import { checkLogin, } from '../firebase/auth';
-
-const RED = '#e74c3c';
-const GREEN = '#2ecc71';
-const WHITE = '#fff';
 
 export default class Splash extends Component {
   constructor(props) {
@@ -32,18 +27,8 @@ export default class Splash extends Component {
     // Get Geolocation
     // ----------------------
     try {
-      const res = await GeoLocation();
-      if (res) {
-        const obj = {
-          lat: res.coords.latitude,
-          long: res.coords.longitude,
-        };
-
-        const setStore = await AsyncStorage.setItem('@user:coordinate', JSON.stringify(obj));
-        if (setStore) {
-          this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN });
-        }
-      }
+      await GeoLocation();
+      this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN });
     } catch (err) {
       this.setState({ msg: err, colorMsg: RED });
       console.log(err);
@@ -82,6 +67,10 @@ export default class Splash extends Component {
     );
   }
 }
+
+const RED = '#e74c3c';
+const GREEN = '#2ecc71';
+const WHITE = '#fff';
 
 const styles = StyleSheet.create({
   wrapper: {
