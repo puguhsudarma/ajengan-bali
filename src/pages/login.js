@@ -17,32 +17,30 @@ export default class Login extends Component {
     };
   }
 
-  login = () => {
+  login = async () => {
     this.setState({ loading: true });
     const { dispatch, } = this.props.navigation;
     const { username, password } = this.state;
 
     // validate
     if (username === '' || password === '') {
-      this.setState({ msg: 'Username dan password tidak boleh kosong!' });
-      this.setState({ loading: false });
+      this.setState({ msg: 'Username dan password tidak boleh kosong!', loading: false, });
       return;
     }
 
-    loginWithEmailPassword(username, password)
-      .then(() => {
+    try {
+      const loging = await loginWithEmailPassword(username, password);
+      if (loging) {
         dispatch(NavigationActions.reset({
           index: 0,
           actions: [
             NavigationActions.navigate({ routeName: 'Authorized' })
           ],
         }));
-        return;
-      })
-      .catch(() => {
-        this.setState({ msg: 'Username atau password salah!' });
-        this.setState({ loading: false });
-      });
+      }
+    } catch (err) {
+      this.setState({ msg: 'Username atau password salah!', loading: false, });
+    }
   }
 
   render() {
@@ -62,9 +60,7 @@ export default class Login extends Component {
                 disabled={loading}
                 placeholder="Email"
                 keyboardType="email-address"
-                onChange={
-                  username => this.setState({ username: username.nativeEvent.text })
-                }
+                onChangeText={username => this.setState({ username })}
                 returnKeyType="next"
               />
             </Item>
@@ -74,13 +70,9 @@ export default class Login extends Component {
                 disabled={loading}
                 placeholder="Password"
                 secureTextEntry
-                onChange={
-                  password => this.setState({ password: password.nativeEvent.text })
-                }
+                onChangeText={password => this.setState({ password })}
                 returnKeyType="go"
-                onSubmitEditing={
-                  () => this.login()
-                }
+                onSubmitEditing={() => this.login()}
               />
             </Item>
             <Button iconLeft block rounded disabled={loading} onPress={() => this.login()} style={styles.buttonSignIn}>
