@@ -25,14 +25,16 @@ const location = () => {
  * 
  * @returns 
  */
-const dialogGeoPermission = async () => {
-  const enabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled({
-    message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location',
-    ok: 'YES',
-    cancel: 'NO',
-  }).catch(err => err);
-
-  return Object.is(enabled, 'enabled');
+const dialogGeoPermission = () => {
+  return new Promise((resolve, reject) => {
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location',
+      ok: 'YES',
+      cancel: 'NO',
+    })
+      .then(() => resolve(true))
+      .catch(() => reject(false));
+  });
 };
 
 /**
@@ -74,6 +76,7 @@ const fetchLocation = async () => {
  */
 const GeoLocation = async () => {
   try {
+    // in Android
     if (Platform.OS === 'android') {
       // check permission
       const permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -87,10 +90,10 @@ const GeoLocation = async () => {
       }
 
       return await storeLocation('@user:coordinate', await location());
-      // in iOS
-    } else {
-      return await storeLocation('@user:coordinate', await location());
     }
+
+    // in iOS
+    return await storeLocation('@user:coordinate', await location());
   } catch (err) {
     throw err;
   }

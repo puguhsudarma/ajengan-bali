@@ -28,6 +28,7 @@ export default class Pendaftaran extends Component {
       subtitleHeader: 'Ajegli',
       loading: false,
       msg: '',
+      colorMsg: RED,
 
       nama: '',
       username: '',
@@ -52,39 +53,40 @@ export default class Pendaftaran extends Component {
       alamat === '' ||
       telp === ''
     ) {
-      this.setState({
-        msg: 'Semua form input tidak boleh kosong!',
-        loading: false,
-      });
+      this.setState({ msg: 'Semua form input tidak boleh kosong!', loading: false, });
       return;
     }
 
     if (password.length < 6) {
-      this.setState({
-        msg: 'Password harus lebih dari 6 karakter!',
-        loading: false,
-      });
+      this.setState({ msg: 'Password harus lebih dari 6 karakter!', loading: false, });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      this.setState({ msg: 'Format email salah!', loading: false, });
       return;
     }
 
     // create user
     try {
+      this.setState({ msg: 'Membuat akun pengguna baru...', colorMsg: WHITE, });
       const creating = await createUser({ alamat, email, nama, password, telp, username });
-      const login = await creating && loginWithEmailPassword(email, password);
+      this.setState({ msg: 'Login akun pengguna baru...' });
+      const login = await loginWithEmailPassword(email, password);
       creating && login &&
         dispatch(NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({ routeName: 'Authorized' })],
         }));
-      this.setState({ loading: false });
+      this.setState({ msg: '', loading: false, colorMsg: RED, });
     } catch (err) {
-      this.setState({ msg: err, loading: false, });
+      this.setState({ msg: err, loading: false, colorMsg: RED, });
       console.log(err);
     }
   }
 
   render() {
-    const { titleHeader, subtitleHeader, loading, msg, } = this.state;
+    const { titleHeader, subtitleHeader, loading, msg, colorMsg, } = this.state;
     const { goBack } = this.props.navigation;
     return (
       <Container>
@@ -103,7 +105,7 @@ export default class Pendaftaran extends Component {
 
         <View style={styles.content}>
           <Content>
-            <Text style={{ textAlign: 'center', color: 'red', marginTop: 20, }}>{msg}</Text>
+            <Text style={{ textAlign: 'center', color: colorMsg, marginTop: 20, }}>{msg}</Text>
             <Form style={styles.form}>
               <Item disabled={loading} regular style={styles.textInputTop}>
                 <Icon active name='people' />
@@ -177,6 +179,9 @@ export default class Pendaftaran extends Component {
   }
 }
 
+const WHITE = '#fff';
+const RED = '#e74c3c';
+
 const styles = {
   content: {
     backgroundColor: '#3498db',
@@ -210,3 +215,8 @@ const styles = {
     marginTop: 5,
   },
 }
+
+const validateEmail = (email) => {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+};

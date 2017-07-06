@@ -11,7 +11,7 @@ const checkLogin = async () => {
   try {
     return await AsyncStorage.getItem('@user:loggedIn') && await firebase.auth().authenticated;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -24,7 +24,7 @@ const currentUser = async () => {
   try {
     return await firebase.auth().currentUser;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -37,7 +37,7 @@ const userUid = async () => {
   try {
     return await firebase.auth().currentUser.uid;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -52,12 +52,12 @@ const createUser = async ({ nama, username, password, email, alamat, telp }) => 
   try {
     const dataUser = { nama, username, password, email, alamat, telp };
     const creating = await firebase.auth().createUserWithEmailAndPassword(email, password);
-    if (creating) {
-      const writeData = await set(`users/${creating.uid}`, dataUser);
-      return writeData;
+    if (!creating) {
+      throw 'Ada kendala koneksi ke server';
     }
+    return await set(`users/${creating.uid}`, dataUser);
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -71,11 +71,10 @@ const createUser = async ({ nama, username, password, email, alamat, telp }) => 
  */
 const loginWithEmailPassword = async (email, pass) => {
   try {
-    const auth = await firebase.auth().signInWithEmailAndPassword(email, pass);
-    const async = await AsyncStorage.setItem('@user:loggedIn', 'true');
-    return auth && async;
+    await AsyncStorage.setItem('@user:loggedIn', 'true');
+    return await firebase.auth().signInWithEmailAndPassword(email, pass);
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -87,11 +86,9 @@ const loginWithEmailPassword = async (email, pass) => {
  */
 const logout = async () => {
   try {
-    const firebaseLogout = await firebase.auth().signOut();
-    const asyncstore = await AsyncStorage.removeItem('@user:loggedIn');
-    return firebaseLogout && asyncstore;
+    return await firebase.auth().signOut() && await AsyncStorage.removeItem('@user:loggedIn');
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 

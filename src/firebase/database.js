@@ -12,7 +12,7 @@ const set = async (ref, data) => {
   try {
     return await firebase.database().ref(ref).set(data);
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
