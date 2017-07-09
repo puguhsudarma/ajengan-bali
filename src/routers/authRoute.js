@@ -11,12 +11,11 @@ import {
   Profile,
 } from '../pages';
 
-
-
 const AUTH_ROUTER = DrawerNavigator(
   {
     dashboard: {
       screen: Dashboard,
+      label: 'Dashboard'
     },
     detailWarung: {
       screen: DetailWarung,
@@ -32,14 +31,14 @@ const AUTH_ROUTER = DrawerNavigator(
     },
     profile: {
       screen: Profile,
-    },    
+    },
   },
   {
     initialRouteName: 'dashboard',
     navigationOptions: {
       header: null,
     },
-    contentComponent: props => <Drawer property={props} name='I Wayan Puguh Sudarma' email='wayanpuguhsudarma@gmail.com' />
+    contentComponent: props => <Drawer property={props} />,
   }
 );
 

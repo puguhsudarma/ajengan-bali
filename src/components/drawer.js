@@ -3,14 +3,34 @@ import { DrawerItems } from 'react-navigation';
 import { View, Text, Image, ScrollView } from 'react-native';
 import backgroundDrawer from '../images/materialDrawer.png';
 import profileImage from '../images/avatar5.png';
+import { userUid, } from '../firebase/auth';
+import { readOnce, } from '../firebase/database';
 
 class Drawer extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      nama: '',
+      email: '',
+    };
   }
 
+  async componentDidMount() {
+    try {
+      const uid = await userUid();
+      const { nama, email } = await readOnce(`users/${uid}`);
+      this.setState({ nama, email, });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // FIXME: 07/07/2017 Reroet -> fixing drawer link router
   render() {
-    const { property, name, email, } = this.props;
+    const { nama, email, } = this.state;
+    let { property, } = this.props;
+    console.log(property);
+    console.log(DrawerItems);
     return (
       <ScrollView>
         <Image source={backgroundDrawer} style={{
@@ -33,7 +53,7 @@ class Drawer extends Component {
               borderColor: '#fff',
               borderWidth: 1,
             }} />
-            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16, }}>{name}</Text>
+            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16, }}>{nama}</Text>
             <Text style={{ color: '#fff', }}>{email}</Text>
           </View>
         </Image>

@@ -22,12 +22,12 @@ const set = async (ref, data) => {
  * @param {any} ref 
  * @returns 
  */
-const read = (ref) => {
+const readOnce = (ref) => {
   return new Promise((resolve, reject) => {
     try {
       firebase.database()
         .ref(ref)
-        .on('value', (snapshot) => {
+        .once('value', (snapshot) => {
           resolve(snapshot.val());
         });
     } catch (err) {
@@ -36,7 +36,19 @@ const read = (ref) => {
   });
 };
 
+const read = (ref) => {
+  return new Promise((resolve, reject) => {
+    try{
+      firebase.database().ref(ref).on('value', (snapshot) => {
+        resolve(snapshot.val());
+      });
+    } catch(err){
+      reject(err);
+    }
+  });
+};
+
 export {
   set,
-  read,
+  readOnce,
 };
