@@ -1,5 +1,6 @@
 import React from 'react';
 import { DrawerNavigator } from 'react-navigation';
+// import { } from '../firebase/database';
 import { Drawer } from '../components';
 import {
   Dashboard,
@@ -14,6 +15,7 @@ const AUTH_ROUTER = DrawerNavigator(
   {
     dashboard: {
       screen: Dashboard,
+      label: 'Dashboard'
     },
     detailWarung: {
       screen: DetailWarung,
@@ -29,14 +31,14 @@ const AUTH_ROUTER = DrawerNavigator(
     },
     profile: {
       screen: Profile,
-    },    
+    },
   },
   {
     initialRouteName: 'dashboard',
     navigationOptions: {
       header: null,
     },
-    contentComponent: props => <Drawer property={props} />
+    contentComponent: props => <Drawer property={props} />,
   }
 );
 

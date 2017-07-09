@@ -15,7 +15,10 @@ import {
   Input,
   Button,
   View,
+  Spinner,
 } from 'native-base';
+import { NavigationActions } from 'react-navigation';
+import { createUser, loginWithEmailPassword, } from '../firebase/auth';
 
 export default class Pendaftaran extends Component {
   constructor(props) {
@@ -23,22 +26,67 @@ export default class Pendaftaran extends Component {
     this.state = {
       titleHeader: 'Pendaftaran',
       subtitleHeader: 'Ajegli',
-      
-      namaLengkap: '',
+      loading: false,
+      msg: '',
+      colorMsg: RED,
+
+      nama: '',
       username: '',
       password: '',
       email: '',
       alamat: '',
-      telepon: '',
+      telp: '',
     };
   }
 
-  submit = () => {
-    console.log(this.state);
+  submit = async () => {
+    this.setState({ loading: true });
+    const { dispatch } = this.props.navigation;
+    const { nama, username, password, email, alamat, telp, } = this.state;
+
+    // validate input
+    if (
+      nama === '' ||
+      username === '' ||
+      password === '' ||
+      email === '' ||
+      alamat === '' ||
+      telp === ''
+    ) {
+      this.setState({ msg: 'Semua form input tidak boleh kosong!', loading: false, });
+      return;
+    }
+
+    if (password.length < 6) {
+      this.setState({ msg: 'Password harus lebih dari 6 karakter!', loading: false, });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      this.setState({ msg: 'Format email salah!', loading: false, });
+      return;
+    }
+
+    // create user
+    try {
+      this.setState({ msg: 'Membuat akun pengguna baru...', colorMsg: WHITE, });
+      const creating = await createUser({ alamat, email, nama, password, telp, username });
+      this.setState({ msg: 'Login akun pengguna baru...' });
+      const login = await loginWithEmailPassword(email, password);
+      creating && login &&
+        dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Authorized' })],
+        }));
+      this.setState({ msg: '', loading: false, colorMsg: RED, });
+    } catch (err) {
+      this.setState({ msg: err, loading: false, colorMsg: RED, });
+      console.log(err);
+    }
   }
 
   render() {
-    const { titleHeader, subtitleHeader } = this.state;
+    const { titleHeader, subtitleHeader, loading, msg, colorMsg, } = this.state;
     const { goBack } = this.props.navigation;
     return (
       <Container>
@@ -54,63 +102,73 @@ export default class Pendaftaran extends Component {
           </Body>
           <Right />
         </Header>
+
         <View style={styles.content}>
           <Content>
+            <Text style={{ textAlign: 'center', color: colorMsg, marginTop: 20, }}>{msg}</Text>
             <Form style={styles.form}>
-              <Item regular style={styles.textInputTop}>
+              <Item disabled={loading} regular style={styles.textInputTop}>
                 <Icon active name='people' />
                 <Input
+                  disabled={loading}
                   placeholder="Nama Lengkap"
                   returnKeyType="next"
-                  onChange={e => this.setState({namaLengkap: e.nativeEvent.text})}
+                  onChangeText={nama => this.setState({ nama })}
                 />
               </Item>
-              <Item regular style={styles.textInput}>
+              <Item disabled={loading} regular style={styles.textInput}>
                 <Icon active name='outlet' />
                 <Input
+                  disabled={loading}
                   placeholder="Username"
                   returnKeyType="next"
-                  onChange={e => this.setState({username: e.nativeEvent.text})}
+                  onChangeText={username => this.setState({ username })}
                 />
               </Item>
-              <Item regular style={styles.textInput}>
+              <Item disabled={loading} regular style={styles.textInput}>
                 <Icon active name='key' />
                 <Input
+                  disabled={loading}
                   placeholder="Password"
                   secureTextEntry
                   returnKeyType="next"
-                  onChange={e => this.setState({password: e.nativeEvent.text})}
+                  onChangeText={password => this.setState({ password })}
                 />
               </Item>
-              <Item regular style={styles.textInput}>
+              <Item disabled={loading} regular style={styles.textInput}>
                 <Icon active name='mail' />
                 <Input
+                  disabled={loading}
                   placeholder="Email"
                   returnKeyType="next"
                   keyboardType="email-address"
-                  onChange={e => this.setState({email: e.nativeEvent.text})}
+                  onChangeText={email => this.setState({ email })}
                 />
               </Item>
-              <Item regular style={styles.textInput}>
+              <Item disabled={loading} regular style={styles.textInput}>
                 <Icon active name='home' />
                 <Input
+                  disabled={loading}
                   placeholder="Alamat"
                   returnKeyType="next"
-                  onChange={e => this.setState({alamat: e.nativeEvent.text})}
+                  onChangeText={alamat => this.setState({ alamat })}
                 />
               </Item>
-              <Item regular style={styles.textInputBottom}>
+              <Item disabled={loading} regular style={styles.textInputBottom}>
                 <Icon active name='call' />
                 <Input
+                  disabled={loading}
                   placeholder="No. Telepon"
                   keyboardType="phone-pad"
                   returnKeyType="go"
-                  onChange={e => this.setState({telepon: e.nativeEvent.text})}
+                  onChangeText={telp => this.setState({ telp })}
                 />
               </Item>
-              
-              <Button iconLeft block rounded style={styles.button} onPress={() => this.submit()}>
-                <Icon active name='list-box' />
+
+              <Button disabled={loading} iconLeft block rounded style={styles.button} onPress={() => this.submit()}>
+                {
+                  (loading && <Spinner color='#fff' />) || (!loading && <Icon active name='list-box' />)
+                }
                 <Text>Daftar</Text>
               </Button>
             </Form>
@@ -120,6 +178,9 @@ export default class Pendaftaran extends Component {
     );
   }
 }
+
+const WHITE = '#fff';
+const RED = '#e74c3c';
 
 const styles = {
   content: {
@@ -154,3 +215,8 @@ const styles = {
     marginTop: 5,
   },
 }
+
+const validateEmail = (email) => {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+};

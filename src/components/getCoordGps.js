@@ -1,48 +1,123 @@
 import {
   PermissionsAndroid,
   Platform,
+  AsyncStorage,
 } from 'react-native';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
-import {
-  Alert,
-} from './alert';
 
-const GeoLocation = () => {
-  return new Promise((res, rej) => {
-    if (Platform.OS === 'android') {
-      // check permission
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-        .then(() => {
-          // request permission if geolocation turn off
-          LocationServicesDialogBox.checkLocationServicesIsEnabled({
-            message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location',
-            ok: 'YES',
-            cancel: 'NO',
-          })
-            .then(() => {
-              // Lets call the geolocation
-              navigator.geolocation.getCurrentPosition(
-                position => {
-                  res(position);
-                },
-                err => {
-                  Alert(err.message);
-                  rej({ errno: 1, msg: err.message });
-                },
-                { enableHighAccuracy: false, timeout: 20000, maximumAge: 10000 }
-              );
-            }).catch(() => {
-              Alert('Geolocation harus diaktifkan.');
-              rej({ errno: 2, msg: 'Geolocation harus diaktifkan.' });
-            });
-        }).catch(() => {
-          Alert('Geolocation Permission Denied.');
-          rej({ errno: 3, msg: 'Geolocation Permission Denied.' });
-        });
-    } else {
-      Alert('On IOS Coming Soon!');
-      rej({ errno: 4, msg: 'On IOS Coming Soon!' });
-    }
+/**
+ * get coordinate location
+ * 
+ * @returns 
+ */
+const location = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      position => resolve(position),
+      err => { reject(err); },
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 10000 }
+    );
   });
 };
-export default GeoLocation;
+
+/**
+ * show dialog to confirm geolocation permission
+ * 
+ * @returns 
+ */
+const dialogGeoPermission = () => {
+  return new Promise((resolve, reject) => {
+    LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      message: '<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location',
+      ok: 'YES',
+      cancel: 'NO',
+    })
+      .then(() => resolve(true))
+      .catch(() => reject(false));
+  });
+};
+
+/**
+ * store coordinate location to AsyncStorage RN
+ * 
+ * @param {any} key 
+ * @param {any} loc 
+ * @returns 
+ */
+const storeLocation = async (key, loc) => {
+  try {
+    const obj = { lat: loc.coords.latitude, long: loc.coords.longitude, };
+    return await AsyncStorage.setItem(key, JSON.stringify(obj));
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * get coordinate location from AsyncStorage RN
+ * 
+ * @returns 
+ */
+const fetchLocation = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@user:coordinate');
+    if (value !== null) {
+      return JSON.parse(value);
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * primary component function to get coordinate location
+ * 
+ * @returns 
+ */
+const GeoLocation = async () => {
+  try {
+    // in Android
+    if (Platform.OS === 'android') {
+      // check permission
+      const permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      if (!permission) {
+        throw 'Akses Geolocation ditolak.';
+      }
+
+      const check = await dialogGeoPermission();
+      if (!check) {
+        throw 'Geolocation harus diaktifkan.';
+      }
+
+      return await storeLocation('@user:coordinate', await location());
+    }
+
+    // in iOS
+    return await storeLocation('@user:coordinate', await location());
+  } catch (err) {
+    throw err;
+  }
+};
+
+/**
+ * to check is there coordinate location saved in AsyncStorage RN
+ * 
+ * @returns 
+ */
+const isSavedLocation = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@user:coordinate');
+    if (value === null) {
+      return false;
+    }
+    return true;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export {
+  GeoLocation,
+  isSavedLocation,
+  fetchLocation,
+};

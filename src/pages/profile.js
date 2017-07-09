@@ -17,10 +17,13 @@ import {
   Button,
   Card,
   CardItem,
+  Spinner,
 } from 'native-base';
 import {
   TitleCard
 } from '../components';
+import { NavigationActions } from 'react-navigation';
+import { logout } from '../firebase/auth';
 //images
 import profileImage from '../images/avatar5.png';
 
@@ -41,12 +44,32 @@ export default class Profile extends Component {
         alamat: 'Jln. Pulau Saelus I No. 1',
         telepon: '+6285338106836',
       },
+      loading: false,
     };
+  }
+
+  logoutAction = () => {
+    const { dispatch } = this.props.navigation;
+    this.setState({ loading: true });
+
+    logout()
+      .then(() => {
+        dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [
+            NavigationActions.navigate({ routeName: 'login' })
+          ],
+        }));
+      })
+      .catch(err => {
+        this.setState({ loading: true });
+        console.log(err);
+      });
   }
 
   render() {
     const { navigate } = this.props.navigation;
-    const { header, user } = this.state;
+    const { header, user, loading, } = this.state;
     const { subtitle, title } = header;
     let { nama, email, gambar, alamat, telepon, username, } = user;
 
@@ -106,7 +129,15 @@ export default class Profile extends Component {
               </Body>
             </CardItem>
             <CardItem>
-              <Button danger style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Text>Logout</Text></Button>
+              <Button danger iconLeft
+                disabled={loading}
+                onPress={() => this.logoutAction()}
+                style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                {
+                  (loading && <Spinner color='#fff' />) || (!loading && <Icon name='home' />) 
+                }
+                <Text>Logout</Text>
+              </Button>
             </CardItem>
           </Card>
         </Content>
