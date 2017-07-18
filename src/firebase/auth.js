@@ -1,31 +1,15 @@
 import { AsyncStorage } from 'react-native';
 import firebase from './config';
-import { set } from './database';
 
 /**
  * check user login in firebase authentication and asyncstorage RN
  * 
  * @returns 
  */
-const checkLogin = async () => {
-  try {
-    return await AsyncStorage.getItem('@user:loggedIn') && await firebase.auth().authenticated;
-  } catch (err) {
-    throw err;
-  }
-};
-
-/**
- * return information about current user login
- * 
- * @returns 
- */
-const currentUser = async () => {
-  try {
-    return await firebase.auth().currentUser;
-  } catch (err) {
-    throw err;
-  }
+const checkLogin = () => {
+  const store = AsyncStorage.getItem('@user:loggedIn');
+  const auth = firebase.auth().authenticated;
+  return Promise.all([store, auth]);
 };
 
 /**
@@ -33,12 +17,8 @@ const currentUser = async () => {
  * 
  * @returns 
  */
-const userUid = async () => {
-  try {
-    return await firebase.auth().currentUser.uid;
-  } catch (err) {
-    throw err;
-  }
+const userUid = () => {
+  return firebase.auth().currentUser.uid;
 };
 
 /**
@@ -48,17 +28,11 @@ const userUid = async () => {
  * @param {any} { nama, username, password, email, alamat, telp } 
  * @returns 
  */
-const createUser = async ({ nama, username, password, email, alamat, telp }) => {
-  try {
-    const dataUser = { nama, username, password, email, alamat, telp };
-    const creating = await firebase.auth().createUserWithEmailAndPassword(email, password);
-    if (!creating) {
-      throw 'Ada kendala koneksi ke server';
-    }
-    return await set(`users/${creating.uid}`, dataUser);
-  } catch (err) {
-    throw err;
-  }
+const createUser = ({ nama, username, password, email, alamat, telp }) => {
+  const dataUser = { nama, username, password, email, alamat, telp };
+  const creating = firebase.auth().createUserWithEmailAndPassword(email, password);
+  const database = firebase.database().ref(`users/${creating.uid}`).set(dataUser);
+  return Promise.all([creating, database]);
 };
 
 /**
@@ -69,13 +43,10 @@ const createUser = async ({ nama, username, password, email, alamat, telp }) => 
  * @param {any} pass 
  * @returns 
  */
-const loginWithEmailPassword = async (email, pass) => {
-  try {
-    await AsyncStorage.setItem('@user:loggedIn', 'true');
-    return await firebase.auth().signInWithEmailAndPassword(email, pass);
-  } catch (err) {
-    throw err;
-  }
+const loginWithEmailPassword = (email, pass) => {
+  const store = AsyncStorage.setItem('@user:loggedIn', 'true');
+  const auth = firebase.auth().signInWithEmailAndPassword(email, pass);
+  return Promise.all([store, auth]);
 };
 
 /**
@@ -84,17 +55,14 @@ const loginWithEmailPassword = async (email, pass) => {
  * 
  * @returns 
  */
-const logout = async () => {
-  try {
-    return await firebase.auth().signOut() && await AsyncStorage.removeItem('@user:loggedIn');
-  } catch (err) {
-    throw err;
-  }
+const logout = () => {
+  const store = AsyncStorage.removeItem('@user:loggedIn');
+  const auth = firebase.auth().signOut();
+  return Promise.all([store, auth]);
 };
 
 export {
   checkLogin,
-  currentUser,
   userUid,
   loginWithEmailPassword,
   logout,

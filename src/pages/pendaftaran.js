@@ -18,7 +18,7 @@ import {
   Spinner,
 } from 'native-base';
 import { NavigationActions } from 'react-navigation';
-import { createUser, loginWithEmailPassword, } from '../firebase/auth';
+import { createUser, loginWithEmailPassword, } from '../firebase';
 
 export default class Pendaftaran extends Component {
   constructor(props) {

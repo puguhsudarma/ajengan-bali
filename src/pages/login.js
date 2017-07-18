@@ -3,7 +3,7 @@ import { TouchableOpacity, } from 'react-native';
 import { Text, Form, Item, Input, Button, View, Icon, Spinner, } from 'native-base';
 // import Hr from 'react-native-hr';
 import { NavigationActions } from 'react-navigation';
-import { loginWithEmailPassword, } from '../firebase/auth';
+import { loginWithEmailPassword, } from '../firebase';
 
 export default class Login extends Component {
   constructor(props) {

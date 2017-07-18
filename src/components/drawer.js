@@ -3,8 +3,8 @@ import { DrawerItems } from 'react-navigation';
 import { View, Text, Image, ScrollView } from 'react-native';
 import backgroundDrawer from '../images/materialDrawer.png';
 import profileImage from '../images/avatar5.png';
-import { userUid, } from '../firebase/auth';
-import { readOnce, } from '../firebase/database';
+
+import firebase, { userUid } from '../firebase';
 
 class Drawer extends Component {
   constructor(props) {
@@ -17,9 +17,10 @@ class Drawer extends Component {
 
   async componentDidMount() {
     try {
-      const uid = await userUid();
-      const { nama, email } = await readOnce(`users/${uid}`);
-      this.setState({ nama, email, });
+      firebase.database().ref(`users/${await userUid()}`).once('value', snapshot => {
+        const { nama, email } = snapshot.val();
+        this.setState({ nama, email, });
+      });
     } catch (err) {
       console.log(err);
     }
@@ -29,8 +30,8 @@ class Drawer extends Component {
   render() {
     const { nama, email, } = this.state;
     let { property, } = this.props;
-    console.log(property);
-    console.log(DrawerItems);
+    // console.log(property);
+    // console.log(DrawerItems);
     return (
       <ScrollView>
         <Image source={backgroundDrawer} style={{

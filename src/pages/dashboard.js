@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { } from 'react-native';
 import {
   Container,
   Header,
@@ -20,6 +21,7 @@ import {
   Thumbnail,
 } from 'native-base';
 import StarRating from 'react-native-star-rating';
+import firebase from '../firebase';
 
 //images
 import profileImage from '../images/avatar5.png';
@@ -178,6 +180,17 @@ export default class Dashboard extends Component {
     };
   }
 
+  componentDidMount() {
+    firebase.database().ref('warung').on('value', snapshot => {
+      snapshot.forEach(async snap => {
+        const { daerah, nama, name_picture, } = snap.val();
+        const fileImage = await firebase.storage().ref(`warung/${name_picture}`).getDownloadURL();
+        const data = { nama, daerah, gambar: { uri: fileImage }, range: 0.3, rating: 3, };
+        this.setState({ dataWarung: [...this.state.dataWarung, data] });
+      });
+    });
+  }
+
   warung = () => {
     const { navigate } = this.props.navigation;
     const data = [...this.state.dataWarung];
@@ -248,6 +261,7 @@ export default class Dashboard extends Component {
   render() {
     const { navigate } = this.props.navigation;
     const { titleHeader, subtitleHeader } = this.state;
+
     return (
       <Container>
         <Header hasTabs={true}>

@@ -9,7 +9,7 @@ import {
 } from 'native-base';
 import { NavigationActions } from 'react-navigation';
 import { GeoLocation, } from '../components';
-import { checkLogin, } from '../firebase/auth';
+import { checkLogin, } from '../firebase';
 
 export default class Splash extends Component {
   constructor(props) {
@@ -38,6 +38,7 @@ export default class Splash extends Component {
     // ----------------------
     try {
       const check = await checkLogin();
+      console.log(check);
       this.setState({ msg: 'Menyiapkan aplikasi...', colorMsg: WHITE, });
       setTimeout(() => {
         dispatch(NavigationActions.reset({
