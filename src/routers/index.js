@@ -1,33 +1,23 @@
 import { StackNavigator } from 'react-navigation';
-import {
-  Login,
-  Pendaftaran,
-  Splash,
-} from '../pages';
-import AUTH_ROUTER from './authRoute';
+import Splash from '../screens/Splash/Splash';
+import Login from '../screens/Login/Login';
+import Pendaftaran from '../screens/Pendaftaran/Pendaftaran';
+// import authRouter from './authRoute';
 
-const SIMALU_APP = StackNavigator(
+const AppNavigator = StackNavigator(
   {
-    splash: {
-      screen: Splash,
-    },
-    login: {
-      screen: Login,
-    },
-    pendaftaran: {
-      screen: Pendaftaran,
-    },
-    Authorized: {
-      screen: AUTH_ROUTER,
-    },
+    'Unauth.Splash': { screen: Splash },
+    'Unauth.Login': { screen: Login },
+    'Unauth.Pendaftaran': { screen: Pendaftaran },
+    // 'Unauth.Auth': { screen: authRouter },
   },
   {
-    initialRouteName: 'splash',
+    initialRouteName: 'Unauth.Splash',
     navigationOptions: {
       header: null,
     },
     headerMode: 'none',
-  }
+  },
 );
 
-export default SIMALU_APP;
+export default AppNavigator;
