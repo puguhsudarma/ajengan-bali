@@ -1,8 +1,8 @@
 import RNFirebase from 'react-native-firebase';
 
 const configurationOptions = {
-  debug: true,
-  persistence: true,
+  debug: false,
+  persistence: false,
   errorOnMissingPlayServices: false,
 };
 

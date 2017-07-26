@@ -18,6 +18,7 @@ import io.invertase.firebase.crash.RNFirebaseCrashPackage; // Firebase Crash Rep
 import io.invertase.firebase.database.RNFirebaseDatabasePackage; // Firebase Realtime Database
 import io.invertase.firebase.storage.RNFirebaseStoragePackage; // Firebase Storage
 import io.invertase.firebase.perf.RNFirebasePerformancePackage; // Firebase Messaging
+import io.invertase.firebase.admob.RNFirebaseAdMobPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebaseAdMobPackage(),
               // Firebase package
               new RNFirebasePackage(),
               new RNFirebaseAnalyticsPackage(),
