@@ -5,7 +5,7 @@ import { makananInitState } from './initState';
 const makananReducer = createReducer(makananInitState, {
   [actionType.FETCH_MAKANAN_DATA_FULLFILED]: (state, action) => ({
     ...state,
-    listData: [...state.listData, ...action.payload],
+    listData: [...action.payload],
     isFetching: false,
     isFetched: true,
   }),

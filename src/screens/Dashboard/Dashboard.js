@@ -36,15 +36,28 @@ class Dashboard extends Component {
         },
       ],
     };
+
+    this._fetchWarung = this._fetchWarung.bind(this);
+    this._fetchMakanan = this._fetchMakanan.bind(this);
   }
 
   componentDidMount() {
+    this._fetchWarung();
+    // this._fetchMakanan();
+  }
+
+  _fetchWarung() {
     this.props.fetchWarung();
+  }
+
+  _fetchMakanan() {
+    this.props.fetchMakanan();
   }
 
   render() {
     const { appInfo, warung, makanan } = this.props;
     const { leftItem, rightItem } = this.header;
+    const { navigate } = this.props.navigation;
     return (
       <Container>
         <Header
@@ -55,11 +68,21 @@ class Dashboard extends Component {
           rightItem={rightItem}
         />
         <Tabs>
-          <Tab heading={<TabHeading><Icon name="albums" /><Text>Warung</Text></TabHeading>}>
-            <ListWarung data={warung.listData} />
+          <Tab heading={<TabHeading><Icon name="ios-restaurant" /><Text>Warung</Text></TabHeading>}>
+            <ListWarung
+              loading={warung.isFetching}
+              data={warung.listData}
+              navigate={navigate}
+              refreshCallback={this._fetchWarung}
+            />
           </Tab>
           <Tab heading={<TabHeading><Icon name="restaurant" /><Text>Makanan</Text></TabHeading>}>
-            <ListMakanan data={makanan.listData} />
+            <ListMakanan
+              loading={makanan.isFetching}
+              data={makanan.listData}
+              navigate={navigate}
+              refreshCallback={this._fetchMakanan}
+            />
           </Tab>
         </Tabs>
       </Container>
@@ -70,8 +93,10 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   appInfo: PropTypes.shape().isRequired,
   navigation: PropTypes.shape().isRequired,
-  warung: PropTypes.arrayOf().isRequired,
-  makanan: PropTypes.arrayOf().isRequired,
+  warung: PropTypes.shape().isRequired,
+  makanan: PropTypes.shape().isRequired,
+  fetchWarung: PropTypes.func.isRequired,
+  fetchMakanan: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -81,7 +106,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   fetchWarung: () => dispatch(fetchWarung()),
-  // fetchMakanan: () => dispatch(fetchMakanan()),
+  fetchMakanan: () => dispatch(fetchMakanan()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

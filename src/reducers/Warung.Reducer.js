@@ -5,7 +5,7 @@ import { warungInitState } from './initState';
 const warungReducer = createReducer(warungInitState, {
   [actionType.FETCH_WARUNG_DATA_FULLFILED]: (state, action) => ({
     ...state,
-    listData: [...state.listData, ...action.payload],
+    listData: [...action.payload],
     isFetching: false,
     isFetched: true,
   }),

@@ -1,99 +1,79 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
+  ActivityIndicator as Spinner,
   Text,
   View,
+  Image,
 } from 'react-native';
-import {
-  Spinner,
-} from 'native-base';
-import { NavigationActions } from 'react-navigation';
-import { GeoLocation, } from '../components';
-import { checkLogin, } from '../firebase';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+// import { NavigationActions } from 'react-navigation';
+import styles from './Splash.Style';
 
-export default class Splash extends Component {
+class Splash extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: 'Ajegli',
-      subtitle: 'Powered By React Native',
-      msg: 'Mencari koordinat pengguna...',
-      colorMsg: WHITE,
+      msg: 'Ini Adalah pesan loading...',
     };
   }
 
-  async componentWillMount() {
-    const { dispatch } = this.props.navigation;
-    // Get Geolocation
-    // ----------------------
-    try {
-      await GeoLocation();
-      this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN });
-    } catch (err) {
-      this.setState({ msg: err, colorMsg: RED });
-      console.log(err);
-    }
+  // async componentWillMount() {
+  //   const { dispatch } = this.props.navigation;
+  //   // Get Geolocation
+  //   // ----------------------
+  //   try {
+  //     await GeoLocation();
+  //     this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN });
+  //   } catch (err) {
+  //     this.setState({ msg: err, colorMsg: RED });
+  //     console.log(err);
+  //   }
 
-    // Check current session
-    // ----------------------
-    try {
-      const check = await checkLogin();
-      console.log(check);
-      this.setState({ msg: 'Menyiapkan aplikasi...', colorMsg: WHITE, });
-      setTimeout(() => {
-        dispatch(NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: check ? 'Authorized' : 'login' })],
-        }));
-      }, 100);
-    } catch (err) {
-      this.setState({ msg: err, colorMsg: RED });
-      console.log(err);
-    }
-  }
+  //   // Check current session
+  //   // ----------------------
+  //   try {
+  //     const check = await checkLogin();
+  //     console.log(check);
+  //     this.setState({ msg: 'Menyiapkan aplikasi...', colorMsg: WHITE, });
+  //     setTimeout(() => {
+  //       dispatch(NavigationActions.reset({
+  //         index: 0,
+  //         actions: [NavigationActions.navigate({ routeName: check ? 'Authorized' : 'login' })],
+  //       }));
+  //     }, 100);
+  //   } catch (err) {
+  //     this.setState({ msg: err, colorMsg: RED });
+  //     console.log(err);
+  //   }
+  // }
 
   render() {
-    const { title, subtitle, msg, colorMsg, } = this.state;
+    const { msg } = this.state;
+    const { title, logo, ver } = this.props.appInfo;
     return (
       <View style={styles.wrapper}>
-        <View style={styles.titleWrapper}>
-          <Text style={styles.title}>{title.toUpperCase()}</Text>
-          <View>
-            <Spinner color='#fff' />
-            <Text style={{ color: colorMsg, top: -20, }}>{msg}</Text>
-          </View>
+        <Image source={logo} style={styles.logo} />
+        <Text style={styles.title}>
+          {`\nSelamat Datang di ${title}\nAjengan Bali App\n\n`}
+        </Text>
+        <Text style={styles.subtitle}>Temukan warung kuliner khas{'\n'}Pulau Dewata{'\n'}</Text>
+        <Text style={styles.ver}>ver. {ver}{'\n\n'}</Text>
+        <View style={styles.loadingContainer}>
+          <Spinner color="#fff" style={styles.spinner} />
+          <Text style={styles.loadingMsg}>{msg}</Text>
         </View>
-        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
     );
   }
 }
 
-const RED = '#e74c3c';
-const GREEN = '#2ecc71';
-const WHITE = '#fff';
+Splash.propTypes = {
+  appInfo: PropTypes.shape().isRequired,
+};
 
-const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: '#3498db',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  titleWrapper: {
-    justifyContent: 'center',
-    flex: 1,
-    alignItems: 'center'
-  },
-  title: {
-    color: '#fff',
-    fontSize: 45,
-    textAlign: 'center',
-    paddingTop: 5,
-  },
-  subtitle: {
-    color: '#fff',
-    fontWeight: '300',
-    paddingBottom: 20
-  },
+const mapStateToProps = state => ({
+  appInfo: state.appInfo,
 });
+const mapDispatchToProps = () => ({});
+export default connect(mapStateToProps, mapDispatchToProps)(Splash);

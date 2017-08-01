@@ -8,7 +8,7 @@ import Dashboard from '../screens/Dashboard/Dashboard';
 // import Search from '../screens/Search/Search';
 // import Profile from '../screens/Profile/Profile';
 
-const authRouter = DrawerNavigator(
+const AuthRouter = DrawerNavigator(
   {
     'Auth.Dashboard': { screen: Dashboard },
     // 'Auth.DetailWarung': { screen: DetailWarung },
@@ -30,4 +30,4 @@ const authRouter = DrawerNavigator(
   },
 );
 
-export default authRouter;
+export default AuthRouter;
