@@ -1,358 +1,146 @@
 import React, { Component } from 'react';
 import {
   Container,
-  Header,
-  Body,
   Content,
-  Title,
-  Subtitle,
-  Left,
-  Right,
-  Icon,
-  Text,
-  View,
-  Button,
-  List,
-  ListItem,
-  Card,
-  CardItem,
-  Input,
-  Item,
 } from 'native-base';
-import StarRating from 'react-native-star-rating';
-import {
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import ActionButton from 'react-native-action-button';
-import Modal from 'react-native-modal';
-import getDirections from 'react-native-google-maps-directions';
-import {
-  TitleCard,
-  Alert,
-  GeoLocation,
-} from '../components';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import GetDirections from 'react-native-google-maps-directions';
+import { Alert } from '../../components/Alert/Alert';
+import Header from '../../components/Header/Header';
+import CardDetail from './DetailMakanan.CardDetail';
+import CardDetailWarung from './DetailMakanan.CardDetailWarung';
+import CardReview from './DetailMakanan.CardReview';
+import ActionButton from './DetailMakanan.ActionButton';
+import Modal from '../../components/Modal/Modal';
 
-export default class DetailMakanan extends Component {
+class DetailMakanan extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      header: {
-        title: 'Detail Makanan',
-        subtitle: 'Ajegli App',
-      },
-      maxRating: 5,
-      detailMakanan: {
-        nama: 'Nasi Be Guling',
-        kategori: 'Masakan Babi Guling',
-        harga: 17000,
-        deskripsi: 'Berisikan nasi, babi guling, lawar, dan sate be guling.',
-        rating: 3.4,
-        gambar: { uri: 'https://cdn.water-sport-bali.com/wp-content/uploads/2012/11/menu-ibu-oka-ubud.jpg' },
-      },
-      detailWarung: {
-        nama: 'Warung Bu Candra',
-        daerah: 'Denpasar Utara',
-        range: 0.3,
-        alamat: 'Jln. Gatsu Barat, Sebelah Hotel Tulip',
-      },
-      review: [
-        {
-          nama: 'Gung Wah',
-          rating: 3.4,
-          komentar: 'Manstap',
-        },
-        {
-          nama: 'Purnama Dewi',
-          rating: 4.8,
-          komentar: 'Manstap',
-        },
-        {
-          nama: 'Gus Win',
-          rating: 2.3,
-          komentar: '',
-        },
-        {
-          nama: 'Ayu Dwijayanti',
-          rating: 3,
-          komentar: 'Ya mantap aja, cuma ada yang kurang',
-        },
-        {
-          nama: 'Nusandika',
-          rating: 5,
-          komentar: 'Ayam betutu disini paling recommended',
-        },
-      ],
-
-      modalVisible: false,
-      reviewInput: {
-        star: 0,
-        desc: '',
-      },
-      modalInputTemp: {
-        star: 0,
-        desc: '',
-      },
-      coordSuccess: false,
-      myCoord: null,
+      star: 0,
+      review: '',
+      visible: false,
     };
+    this._onModalShow = this._onModalShow.bind(this);
+    this._onModalOk = this._onModalOk.bind(this);
+    this._onModalCancel = this._onModalCancel.bind(this);
+    this._handleGetDirections = this._handleGetDirections.bind(this);
   }
 
-  componentDidMount() {
-    GeoLocation((position) => {
-      this.setState({ myCoord: position.coords, coordSuccess: true });
-    });
-  }
-
-  handleGetDirections = () => {
-    if (!this.state.coordSuccess) return Alert('Geolocation tidak ditemukan.');
-    const { latitude, longitude } = this.state.myCoord;
-    getDirections({
+  _handleGetDirections() {
+    const { latitude: myLat, longitude: myLong } = this.props.appSetting;
+    const { latitude, longitude } = this.props.warung;
+    if (myLat === null && myLong === null) return Alert('Koordinat lokasi pengguna tidak ditemukan');
+    return GetDirections({
       source: {
+        latitude: myLat,
+        longitude: myLong,
+      },
+      destination: {
         latitude,
         longitude,
       },
-      destination: {
-        latitude: -8.648222,
-        longitude: 115.225591,
-      },
     });
   }
 
-  review = () => {
-    const data = [...this.state.review];
-    return (
-      <List dataArray={data} renderRow={item =>
-        <ListItem>
-          <Body>
-            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.nama}</Text>
-            <View style={{ width: 100, marginTop: 5, marginLeft: 10, }}>
-              <StarRating
-                starSize={15}
-                disabled={true}
-                maxStars={this.state.maxRating}
-                rating={item.rating}
-                starColor={'#FFDF00'}
-              />
-            </View>
-            <Text note>{item.komentar}</Text>
-          </Body>
-        </ListItem>
-      } />
-    );
-  }
-
-  numberWithCommas = (x) => {
-    var parts = x.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    return parts.join('.');
-  }
-  
   // modal function
-  onStarRatingPress = (rating) => {
-    this.setState(prevState => ({
-      modalInputTemp: {
-        ...prevState.modalInputTemp,
-        star: rating,
-      }
-    }));
+  _onModalShow() {
+    this.setState({
+      visible: true,
+    });
   }
-
-  onReviewInput = (text) => {
-    this.setState(prevState => ({
-      modalInputTemp: {
-        ...prevState.modalInputTemp,
-        desc: text,
-      }
-    }));
+  _onModalOk(input) {
+    this.setState({
+      star: input.star,
+      review: input.review,
+    });
   }
-
-  onModalOk = () => {
-    this.setState(prevState => ({
-      reviewInput: {
-        ...prevState.modalInputTemp,
-      },
-      modalVisible: !prevState.modalVisible,
-    }));
-  }
-
-  onModalCancel = () => {
-    this.setState(prevState => ({
-      modalInputTemp: {
-        ...prevState.reviewInput,
-      },
-      modalVisible: !prevState.modalVisible,
-    }));
+  _onModalCancel() {
+    this.setState({
+      visible: false,
+    });
   }
 
   render() {
-    const { header, modalVisible, maxRating, modalInputTemp, detailMakanan, detailWarung } = this.state;
-    const { nama, deskripsi, gambar, rating, harga, kategori } = detailMakanan;
-    const { nama: namaWarung, alamat, daerah, range } = detailWarung;
-    const { fromWarungPage } = this.props.navigation.state.params;
+    const { star, review, visible } = this.state;
+    const { nama, deskripsi, gambar, rating, harga, kategori, reviews } = this.props.makanan;
+    const { nama: namaWarung, alamat, daerah, range, fromWarungPage } = this.props.warung;
     const { goBack, navigate } = this.props.navigation;
+    const { title, maxRating } = this.props.appSetting;
 
     return (
       <Container>
-        <Header>
-          <Left>
-            <Button transparent onPress={() => goBack()}>
-              <Icon name='arrow-back' />
-            </Button>
-          </Left>
-          <Body>
-            <Title>{header.title}</Title>
-            <Subtitle style={styles.subtitle}>{header.subtitle.toUpperCase()}</Subtitle>
-          </Body>
-          <Right>
-            <Button transparent onPress={() => { }}>
-              <Icon name='refresh' />
-            </Button>
-          </Right>
-        </Header>
+        <Header
+          leftItem={{
+            icon: 'arrow-back',
+            funcPress: () => goBack(),
+          }}
+          rightItem={[
+            {
+              id: 1,
+              icon: 'refresh',
+              funcPress: () => { },
+            },
+          ]}
+          subtitle={title.toUpperCase()}
+          title="Detail Warung"
+        />
 
         <Content>
-          <Card style={styles.card}>
-            <CardItem>
-              <Body>
-                <TitleCard>{nama}</TitleCard>
-              </Body>
-            </CardItem>
-            <CardItem cardBody>
-              <Image
-                style={{ height: 200, flex: 1, flexDirection: 'column', marginLeft: 10, marginRight: 10, marginBottom: 10 }}
-                resizeMode='center'
-                source={gambar}
-              />
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'brown' }} name="md-browsers" />
-              <Text>{kategori}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'green' }} name="md-cash" />
-              <Text>{'Rp. '}{this.numberWithCommas(harga)}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'red' }} name="list" />
-              <Text>{deskripsi}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'brown' }} name="md-star" />
-              <StarRating
-                starSize={30}
-                disabled={true}
-                maxStars={maxRating}
-                rating={rating}
-                starColor={'#FFDF00'}
-              />
-            </CardItem>
-          </Card>
+          <CardDetail
+            nama={nama}
+            deskripsi={deskripsi}
+            gambar={gambar}
+            harga={harga}
+            kategori={kategori}
+            rating={rating}
+            maxRating={maxRating}
+          />
 
-          <Card style={styles.card}>
-            <CardItem>
-              <Body>
-                <TitleCard>Informasi Warung</TitleCard>
-              </Body>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'green' }} name="home" />
-              <Text>{namaWarung}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'brown' }} name="bus" />
-              <Text>{range}{' Km'}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'blue' }} name="pin" />
-              <Text>{daerah}</Text>
-            </CardItem>
-            <CardItem>
-              <Icon active style={{ color: 'green' }} name="md-map" />
-              <Text>{alamat}</Text>
-            </CardItem>
-            {
-              !fromWarungPage &&
-              <CardItem>
-                <Icon active style={{ color: 'green' }} name="md-book" />
-                <Button rounded onPress={() => navigate('detailWarung')}>
-                  <Text>Halaman Warung</Text>
-                </Button>
-              </CardItem>
-            }
-          </Card>
+          <CardDetailWarung
+            alamat={alamat}
+            daerah={daerah}
+            displayButton={fromWarungPage}
+            nama={namaWarung}
+            navigate={() => navigate('warung')}
+            range={range}
+          />
 
-          <Card style={styles.card}>
-            <CardItem header>
-              <TitleCard>Review Makanan</TitleCard>
-            </CardItem>
-            {this.review()}
-          </Card>
+          <CardReview
+            data={reviews}
+            maxRating={maxRating}
+          />
         </Content>
 
-        <ActionButton buttonColor='rgba(231,76,60,1)'>
+        <ActionButton
+          onPressModal={this._onModalShow}
+          onPressNav={this._handleGetDirections}
+        />
 
-          <ActionButton.Item buttonColor='#9b59b6' title='Navigasi Peta' onPress={() => this.handleGetDirections()}>
-            <Icon name='md-map' style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-
-          <ActionButton.Item buttonColor='#3498db' title='Beri Review' onPress={() => this.setState({ modalVisible: !modalVisible })}>
-            <Icon name='md-star' style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-        </ActionButton>
-
-        <Modal isVisible={modalVisible}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={styles.modal}>
-              <TitleCard style={{ marginBottom: 20, }}>Input Review</TitleCard>
-
-              <StarRating
-                disabled={false}
-                maxStars={maxRating}
-                rating={modalInputTemp.star}
-                selectedStar={(rating) => this.onStarRatingPress(rating)}
-                starColor={'#FFDF00'}
-              />
-
-              <View style={{ marginTop: 20, }}>
-                <Item>
-                  <Input placeholder="Review" value={modalInputTemp.desc} onChange={event => this.onReviewInput(event.nativeEvent.text)} />
-                </Item>
-              </View>
-              <View style={{ alignSelf: 'flex-end', flexDirection: 'row', }}>
-                <TouchableOpacity style={{ marginTop: 20, marginLeft: 20, }} onPress={() => this.onModalCancel()}>
-                  <Text style={{ color: 'brown' }}>Cancel</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={{ marginTop: 20, marginLeft: 20, }} onPress={() => this.onModalOk()}>
-                  <Text style={{ color: 'brown' }}>Submit</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        <Modal
+          visible={visible}
+          input={{ star, review }}
+          maxRating={maxRating}
+          onModalCancel={this._onModalCancel}
+          onModalOk={this._onModalOk}
+        />
       </Container>
     );
   }
 }
 
-const styles = {
-  subtitle: {
-    color: '#fff',
-  },
-  actionButtonIcon: {
-    fontSize: 20,
-    height: 22,
-    color: 'white',
-  },
-  card: {
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  modal: {
-    padding: 20,
-    margin: 5,
-    backgroundColor: '#fff',
-    flexGrow: 1,
-  }
+DetailMakanan.propTypes = {
+  appSetting: PropTypes.shape().isRequired,
+  navigation: PropTypes.shape().isRequired,
+  warung: PropTypes.shape().isRequired,
+  makanan: PropTypes.shape().isRequired,
 };
+
+const mapStateToProps = state => ({
+  appSetting: state.appSetting,
+  warung: state.warung.selectedData,
+  makanan: state.makanan.selectedData,
+});
+const mapDispatchToProps = () => ({});
+export default connect(mapStateToProps, mapDispatchToProps)(DetailMakanan);

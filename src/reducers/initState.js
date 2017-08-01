@@ -26,4 +26,6 @@ export const appSetting = {
   ver: '0.1-alpha',
   logo,
   maxRating: 5,
+  lat: null,
+  long: null,
 };
