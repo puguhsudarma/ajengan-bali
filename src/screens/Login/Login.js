@@ -19,7 +19,7 @@ class Login extends Component {
   }
 
   render() {
-    const { title, logo } = this.props.appInfo;
+    const { title, logo } = this.props.appSetting;
     const { navigate } = this.props.navigation;
     const { msg, loading } = this.state;
 
@@ -45,12 +45,12 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  appInfo: PropTypes.shape().isRequired,
+  appSetting: PropTypes.shape().isRequired,
   navigation: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
-  appInfo: state.appInfo,
+  appSetting: state.appSetting,
 });
 const mapDispatchToProps = () => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

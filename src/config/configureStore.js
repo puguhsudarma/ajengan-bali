@@ -3,14 +3,14 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import reduxLogger from 'redux-logger';
 import reduxThunk from 'redux-thunk';
-import appInfoReducer from '../reducers/AppInfo.Reducer';
+import appSettingReducer from '../reducers/AppSetting.Reducer';
 import navReducer from '../reducers/Nav.Reducer';
 import warungReducer from '../reducers/Warung.Reducer';
 import makananReducer from '../reducers/Makanan.Reducer';
 import AppWithNavigationState from './configureRoute';
 
 const reducerCombined = combineReducers({
-  appInfo: appInfoReducer,
+  appSetting: appSettingReducer,
   nav: navReducer,
   warung: warungReducer,
   makanan: makananReducer,

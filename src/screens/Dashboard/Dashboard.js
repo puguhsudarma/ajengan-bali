@@ -55,14 +55,14 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { appInfo, warung, makanan } = this.props;
+    const { appSetting, warung, makanan } = this.props;
     const { leftItem, rightItem } = this.header;
     const { navigate } = this.props.navigation;
     return (
       <Container>
         <Header
           hasTabs
-          subtitle={appInfo.title}
+          subtitle={appSetting.title}
           title="Dashboard"
           leftItem={leftItem}
           rightItem={rightItem}
@@ -91,7 +91,7 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  appInfo: PropTypes.shape().isRequired,
+  appSetting: PropTypes.shape().isRequired,
   navigation: PropTypes.shape().isRequired,
   warung: PropTypes.shape().isRequired,
   makanan: PropTypes.shape().isRequired,
@@ -100,7 +100,7 @@ Dashboard.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  appInfo: state.appInfo,
+  appSetting: state.appSetting,
   warung: state.warung,
   makanan: state.makanan,
 });

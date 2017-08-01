@@ -50,7 +50,7 @@ class Splash extends Component {
 
   render() {
     const { msg } = this.state;
-    const { title, logo, ver } = this.props.appInfo;
+    const { title, logo, ver } = this.props.appSetting;
     return (
       <View style={styles.wrapper}>
         <Image source={logo} style={styles.logo} />
@@ -69,11 +69,11 @@ class Splash extends Component {
 }
 
 Splash.propTypes = {
-  appInfo: PropTypes.shape().isRequired,
+  appSetting: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
-  appInfo: state.appInfo,
+  appSetting: state.appSetting,
 });
 const mapDispatchToProps = () => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(Splash);

@@ -6,7 +6,7 @@ export const navigatorState = AppNavigator.router.getStateForAction(NavigationAc
 
 export const warungInitState = {
   listData: [],
-  selectedDarung: {},
+  selectedData: {},
   isFetching: false,
   isFetched: false,
   error: null,
@@ -20,9 +20,10 @@ export const makananInitState = {
   error: null,
 };
 
-export const appInfo = {
+export const appSetting = {
   title: 'Ajegli',
   subtitle: 'Powered By React Native',
   ver: '0.1-alpha',
   logo,
+  maxRating: 5,
 };

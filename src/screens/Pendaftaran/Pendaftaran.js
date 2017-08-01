@@ -26,7 +26,7 @@ class Pendaftaran extends Component {
   render() {
     const { loading, msg } = this.state;
     const { goBack } = this.props.navigation;
-    const { title } = this.props.appInfo;
+    const { title } = this.props.appSetting;
 
     return (
       <Container>
@@ -60,12 +60,12 @@ class Pendaftaran extends Component {
 }
 
 Pendaftaran.propTypes = {
-  appInfo: PropTypes.shape().isRequired,
+  appSetting: PropTypes.shape().isRequired,
   navigation: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({
-  appInfo: state.appInfo,
+  appSetting: state.appSetting,
 });
 const mapDispatchToProps = () => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(Pendaftaran);
