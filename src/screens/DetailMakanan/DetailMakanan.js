@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
-import {
-  Container,
-  Content,
-} from 'native-base';
+import { Container, Content } from 'native-base';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import GetDirections from 'react-native-google-maps-directions';
 import { Alert } from '../../components/Alert/Alert';
 import Header from '../../components/Header/Header';
+import ActionButton from '../../components/ActionButton/ActionButton';
+import Modal from '../../components/Modal/Modal';
 import CardDetail from './DetailMakanan.CardDetail';
 import CardDetailWarung from './DetailMakanan.CardDetailWarung';
 import CardReview from './DetailMakanan.CardReview';
-import ActionButton from './DetailMakanan.ActionButton';
-import Modal from '../../components/Modal/Modal';
 
 class DetailMakanan extends Component {
   constructor(props) {
@@ -44,18 +41,19 @@ class DetailMakanan extends Component {
     });
   }
 
-  // modal function
   _onModalShow() {
     this.setState({
       visible: true,
     });
   }
+
   _onModalOk(input) {
     this.setState({
       star: input.star,
       review: input.review,
     });
   }
+
   _onModalCancel() {
     this.setState({
       visible: false,
@@ -114,8 +112,22 @@ class DetailMakanan extends Component {
         </Content>
 
         <ActionButton
-          onPressModal={this._onModalShow}
-          onPressNav={this._handleGetDirections}
+          actions={[
+            {
+              key: 1,
+              color: '#9b59b6',
+              title: 'Navigasi Peta',
+              onPress: this._handleGetDirections(),
+              icon: 'map',
+            },
+            {
+              key: 2,
+              color: '#3498db',
+              title: 'Beri Review',
+              onPress: this._onModalShow(),
+              icon: 'star',
+            },
+          ]}
         />
 
         <Modal

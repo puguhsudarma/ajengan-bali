@@ -14,6 +14,7 @@ export const warungInitState = {
 
 export const makananInitState = {
   listData: [],
+  listSelectedData: [],
   selectedData: {},
   isFetching: false,
   isFetched: false,
@@ -26,6 +27,6 @@ export const appSetting = {
   ver: '0.1-alpha',
   logo,
   maxRating: 5,
-  lat: null,
-  long: null,
+  latitude: null,
+  longitude: null,
 };

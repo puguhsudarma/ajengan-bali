@@ -1,26 +1,26 @@
 import React from 'react';
 import { FlatList } from 'react-native';
 import {
-  Card,
-  CardItem,
   ListItem,
   Body,
   Text,
   View,
+  Card,
+  CardItem,
 } from 'native-base';
 import PropTypes from 'prop-types';
 import StarRating from 'react-native-star-rating';
-import styles from './DetailMakanan.Style';
 import TitleCard from '../../components/TitleCard/TitleCard';
+import styles from './DetailWarung.Style';
 
-const RenderReview = ({ nama, rating, komentar, maxRating }) => (
+const RenderItem = ({ nama, rating, komentar, maxRating }) => (
   <ListItem>
     <Body>
-      <Text style={styles.reviewTextNama}>{nama}</Text>
-      <View style={styles.reviewStarContainer}>
+      <Text style={styles.cardReviewNama}>{nama}</Text>
+      <View style={styles.cardReviewStarContainer}>
         <StarRating
-          starSize={15}
           disabled
+          starSize={15}
           maxStars={maxRating}
           rating={rating}
           starColor={styles.colorStar}
@@ -31,7 +31,7 @@ const RenderReview = ({ nama, rating, komentar, maxRating }) => (
   </ListItem>
 );
 
-RenderReview.propTypes = {
+RenderItem.propTypes = {
   nama: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
   komentar: PropTypes.string.isRequired,
@@ -41,15 +41,13 @@ RenderReview.propTypes = {
 const CardReview = ({ data, maxRating }) => (
   <Card style={styles.card}>
     <CardItem header>
-      <TitleCard>Review Makanan</TitleCard>
+      <TitleCard>Review Warung</TitleCard>
     </CardItem>
-
     <FlatList
-      data={data}
-      keyExtractor={item => item.id}
-      renderItem={item => <RenderReview {...item} maxRating={maxRating} />}
+      dataArray={data}
+      renderRow={item => <RenderItem {...item} maxRating={maxRating} />}
     />
-  </Card >
+  </Card>
 );
 
 CardReview.propTypes = {

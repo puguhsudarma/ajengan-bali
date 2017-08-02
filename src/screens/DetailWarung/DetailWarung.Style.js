@@ -3,7 +3,13 @@ const styles = {
     marginLeft: 5,
     marginRight: 5,
   },
-  makananImage: {
+  modal: {
+    padding: 20,
+    margin: 5,
+    backgroundColor: '#fff',
+    flexGrow: 1,
+  },
+  warungImage: {
     height: 200,
     flex: 1,
     flexDirection: 'column',
@@ -11,12 +17,16 @@ const styles = {
     marginRight: 10,
     marginBottom: 10,
   },
+  StarContainer: {
+    width: 100,
+    marginTop: 5,
+  },
   colorStar: '#FFDF00',
-  reviewTextNama: {
+  cardReviewNama: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  reviewStarContainer: {
+  cardReviewStarContainer: {
     width: 100,
     marginTop: 5,
     marginLeft: 10,
