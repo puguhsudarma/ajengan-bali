@@ -10,6 +10,7 @@ export const warungInitState = {
   isFetching: false,
   isFetched: false,
   error: null,
+  markers: [],
 };
 
 export const makananInitState = {
