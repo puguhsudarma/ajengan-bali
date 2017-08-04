@@ -29,4 +29,13 @@ export const appSetting = {
   maxRating: 5,
   latitude: null,
   longitude: null,
+  userLogin: {
+    email: null,
+    gambar: null,
+    nama: null,
+    alamat: null,
+    telepon: null,
+    username: null,
+    loading: false,
+  },
 };
