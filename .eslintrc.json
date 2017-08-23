@@ -1,4 +1,8 @@
 {
+    "globals": {
+        "navigator": true,
+        "storeLocation": true
+    },
     "extends": "airbnb",
     "rules": {
         "react/jsx-filename-extension": [

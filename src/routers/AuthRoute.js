@@ -22,11 +22,13 @@ const AuthRouter = DrawerNavigator(
     navigationOptions: {
       header: null,
     },
-    contentComponent: props => (<Drawer
-      property={props}
-      email="wayanpuguhsudarma@gmail.com"
-      nama="I Wayan Puguh Sudarma"
-    />),
+    contentComponent: props => (
+      <Drawer
+        property={props}
+        email="wayanpuguhsudarma@gmail.com"
+        nama="I Wayan Puguh Sudarma"
+      />
+    ),
   },
 );
 

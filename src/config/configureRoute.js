@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions, addNavigationHelpers } from 'react-navigation';
 import AppNavigator from '../routers/';
@@ -36,5 +37,10 @@ class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  nav: PropTypes.shape().isRequired,
+};
 
 export default connect(state => ({ nav: state.nav }))(App);
