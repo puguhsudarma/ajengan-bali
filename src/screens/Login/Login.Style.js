@@ -1,6 +1,6 @@
 const styles = {
   container: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#004D40',
     flex: 1,
   },
   titleContainer: {

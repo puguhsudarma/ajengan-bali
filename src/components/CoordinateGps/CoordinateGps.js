@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform } from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import LocationDialogBox from 'react-native-android-location-services-dialog-box';
 import {
   enableHighAccuracy,
@@ -10,7 +10,7 @@ import {
 } from './CoordinateGps.Const';
 
 const coordinate = () => (
-  Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(
+  new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(
     position => resolve(position),
     err => reject(err),
     { enableHighAccuracy, timeout, maximumAge },
@@ -18,38 +18,28 @@ const coordinate = () => (
 );
 
 const dialogPermission = () => (
-  Promise((resolve, reject) =>
+  new Promise((resolve, reject) =>
     LocationDialogBox.checkLocationServicesIsEnabled({ message, ok, cancel })
       .then(() => resolve(true))
       .catch(() => reject(false)),
   )
 );
 
-const GeoLocation = async () => {
+const geoLocation = async () => {
   try {
-    // in Android
-    if (Platform.OS === 'android') {
-      // check permission
-      const permission = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-      if (!permission) {
-        throw new Error('Akses Geolocation ditolak.');
-      }
-
-      const check = await dialogPermission();
-      if (!check) {
-        throw new Error('Geolocation harus diaktifkan.');
-      }
-
-      return await storeLocation('@user:coordinate', await coordinate());
+    // check permission
+    if (await !PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)) {
+      throw new Error('Akses Geolocation ditolak.');
     }
 
-    // in iOS
-    return await storeLocation('@user:coordinate', await coordinate());
+    if (await !dialogPermission()) {
+      throw new Error('Geolocation harus diaktifkan.');
+    }
+
+    return coordinate();
   } catch (err) {
     throw err;
   }
 };
 
-export default GeoLocation;
+export default geoLocation;

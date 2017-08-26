@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
+import * as actionCreator from '../../actions/actionCreator';
+import firebase from '../../config/firebase';
+import { validateEmail } from '../../libs/helper';
 import Title from './Login.Title';
 import Form from './Login.Form';
 import ButtonSignUp from './Login.SignUpButton';
@@ -12,10 +16,55 @@ class Login extends Component {
     super(props);
     this.state = {
       msg: '',
-      username: '',
+      email: '',
       password: '',
       loading: false,
     };
+    this._loginButton = this._loginButton.bind(this);
+  }
+
+  _loginButton() {
+    this.setState({ loading: true });
+    const { email, password } = this.state;
+    const { dispatch: navDispatch } = this.props.navigation;
+    const { dispatch } = this.props;
+
+    // validation
+    // empty
+    if (email === '' || password === '') {
+      this.setState({ loading: false, msg: 'Email dan password tidak boleh kosong' });
+      return;
+    }
+
+    // email pattern
+    if (!validateEmail(email)) {
+      this.setState({ loading: false, msg: 'Email tidak valid' });
+      return;
+    }
+
+    // password length
+    if (password.length < 6) {
+      this.setState({ loading: false, msg: 'Password harus lebih dari 6 karakter' });
+      return;
+    }
+
+    // login process
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((res) => {
+        const { displayName, email: emailLogin, uid } = res;
+        dispatch(actionCreator.setUser({ displayName, email: emailLogin, uid }));
+        navDispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
+        }));
+      })
+      .catch((err) => {
+        if (err.code === 'auth/user-not-found') {
+          this.setState({ loading: false, msg: 'Akun pengguna tidak ditemukan.' });
+          return;
+        }
+        this.setState({ loading: false, msg: err.message });
+      });
   }
 
   render() {
@@ -29,14 +78,14 @@ class Login extends Component {
         <View style={styles.formContainer}>
           <Form
             loading={loading}
-            onChangeTextUsername={username => this.setState({ username })}
+            onChangeTextEmail={email => this.setState({ email })}
             onChangeTextPassword={password => this.setState({ password })}
-            onLogin={() => { }}
+            onLogin={() => this._loginButton()}
             msg={msg}
           />
           <ButtonSignUp
             loading={loading}
-            navigate={() => navigate('pendaftaran')}
+            navigate={() => navigate('Unauth.Pendaftaran')}
           />
         </View>
       </View>
@@ -47,10 +96,10 @@ class Login extends Component {
 Login.propTypes = {
   appSetting: PropTypes.shape().isRequired,
   navigation: PropTypes.shape().isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   appSetting: state.appSetting,
 });
-const mapDispatchToProps = () => ({});
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps)(Login);

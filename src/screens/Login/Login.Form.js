@@ -11,7 +11,7 @@ import {
 import PropTypes from 'prop-types';
 import styles from './Login.Style';
 
-const Form = ({ loading, onChangeTextUsername, onChangeTextPassword, onLogin, msg }) => (
+const Form = ({ loading, onChangeTextEmail, onChangeTextPassword, onLogin, msg }) => (
   <FormNB>
     <Text style={styles.textMsg}>{msg}</Text>
     <Item regular disabled={loading} style={styles.textInputEmail}>
@@ -20,7 +20,7 @@ const Form = ({ loading, onChangeTextUsername, onChangeTextPassword, onLogin, ms
         disabled={loading}
         placeholder="Email"
         keyboardType="email-address"
-        onChangeText={onChangeTextUsername}
+        onChangeText={onChangeTextEmail}
         returnKeyType="next"
       />
     </Item>
@@ -54,7 +54,7 @@ const Form = ({ loading, onChangeTextUsername, onChangeTextPassword, onLogin, ms
 
 Form.propTypes = {
   loading: PropTypes.bool.isRequired,
-  onChangeTextUsername: PropTypes.func.isRequired,
+  onChangeTextEmail: PropTypes.func.isRequired,
   onChangeTextPassword: PropTypes.func.isRequired,
   onLogin: PropTypes.func.isRequired,
   msg: PropTypes.string.isRequired,

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import reduxLogger from 'redux-logger';
 import reduxThunk from 'redux-thunk';
 import appSettingReducer from '../reducers/AppSetting.Reducer';
-import navReducer from '../reducers/Nav.Reducer';
+import navReducer, { customNavReducer } from '../reducers/Nav.Reducer';
 import warungReducer from '../reducers/Warung.Reducer';
 import makananReducer from '../reducers/Makanan.Reducer';
 import AppWithNavigationState from './configureRoute';
@@ -12,6 +12,7 @@ import AppWithNavigationState from './configureRoute';
 const reducerCombined = combineReducers({
   appSetting: appSettingReducer,
   nav: navReducer,
+  customNav: customNavReducer,
   warung: warungReducer,
   makanan: makananReducer,
 });

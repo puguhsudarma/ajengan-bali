@@ -8,18 +8,26 @@ import AppNavigator from '../routers/';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.onBackPress = this.onBackPress.bind(this);
+    this._onBackPress = this._onBackPress.bind(this);
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
+    BackHandler.addEventListener('hardwareBackPress', this._onBackPress);
   }
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
+    BackHandler.removeEventListener('hardwareBackPress', this._onBackPress);
   }
 
-  onBackPress() {
-    const { dispatch, nav } = this.props;
+  _onBackPress() {
+    const { dispatch, nav, customNav } = this.props;
+    if (customNav.drawerOpen) {
+      dispatch({
+        type: 'Navigation/NAVIGATE',
+        routeName: 'DrawerClose',
+      });
+      return true;
+    }
+
     if (nav.index === 0) {
       return false;
     }
@@ -41,6 +49,7 @@ class App extends Component {
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
   nav: PropTypes.shape().isRequired,
+  customNav: PropTypes.shape().isRequired,
 };
 
-export default connect(state => ({ nav: state.nav }))(App);
+export default connect(state => ({ nav: state.nav, customNav: state.customNav }))(App);

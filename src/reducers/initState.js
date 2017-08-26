@@ -3,6 +3,9 @@ import AppNavigator from '../routers';
 import logo from '../images/logo.png';
 
 export const navigatorState = AppNavigator.router.getStateForAction(NavigationActions.init());
+export const customNavInitState = {
+  drawerOpen: false,
+};
 
 export const warungInitState = {
   listData: [],
@@ -28,15 +31,11 @@ export const appSetting = {
   ver: '0.1-alpha',
   logo,
   maxRating: 5,
-  latitude: null,
-  longitude: null,
+  position: {},
   userLogin: {
+    isLogin: false,
+    displayName: null,
     email: null,
-    gambar: null,
-    nama: null,
-    alamat: null,
-    telepon: null,
-    username: null,
-    loading: false,
+    uid: null,
   },
 };

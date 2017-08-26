@@ -7,46 +7,55 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import styles from './Splash.Style';
+import GeoLocation from '../../components/CoordinateGps/CoordinateGps';
+import firebase from '../../config/firebase';
+import * as actionCreator from '../../actions/actionCreator';
 
 class Splash extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      msg: 'Ini Adalah pesan loading...',
+      msg: 'Menyiapkan aplikasi...',
     };
+    this.authListen = null;
   }
 
-  // async componentWillMount() {
-  //   const { dispatch } = this.props.navigation;
-  //   // Get Geolocation
-  //   // ----------------------
-  //   try {
-  //     await GeoLocation();
-  //     this.setState({ msg: 'Koordinat pengguna berhasil didapat...', colorMsg: GREEN });
-  //   } catch (err) {
-  //     this.setState({ msg: err, colorMsg: RED });
-  //     console.log(err);
-  //   }
+  async componentWillMount() {
+    const { dispatch: navDispatch } = this.props.navigation;
+    const { dispatch } = this.props;
+    this.setState({ msg: 'Mencari lokasi koordinat...' });
+    try {
+      const pos = await GeoLocation();
+      dispatch(actionCreator.setLocation(pos));
+      this.setState({ msg: 'Koordinat pengguna berhasil didapat...' });
+      this.authListen = firebase.auth().onAuthStateChanged((user) => {
+        this.setState({ msg: 'Menyiapkan aplikasi...' });
+        if (user) {
+          const { uid, displayName, email } = user;
+          dispatch(actionCreator.setUser({ uid, displayName, email }));
+          navDispatch(NavigationActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
+          }));
+          return;
+        }
+        navDispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Unauth.Login' })],
+        }));
+      });
+    } catch (err) {
+      this.setState({ msg: err });
+    }
+  }
 
-  //   // Check current session
-  //   // ----------------------
-  //   try {
-  //     const check = await checkLogin();
-  //     console.log(check);
-  //     this.setState({ msg: 'Menyiapkan aplikasi...', colorMsg: WHITE, });
-  //     setTimeout(() => {
-  //       dispatch(NavigationActions.reset({
-  //         index: 0,
-  //         actions: [NavigationActions.navigate({ routeName: check ? 'Authorized' : 'login' })],
-  //       }));
-  //     }, 100);
-  //   } catch (err) {
-  //     this.setState({ msg: err, colorMsg: RED });
-  //     console.log(err);
-  //   }
-  // }
+  componentWillUnmount() {
+    if (this.authListen) {
+      this.authListen();
+    }
+  }
 
   render() {
     const { msg } = this.state;
@@ -57,11 +66,11 @@ class Splash extends Component {
         <Text style={styles.title}>
           {`\nSelamat Datang di ${title}\nAjengan Bali App\n\n`}
         </Text>
-        <Text style={styles.subtitle}>Temukan warung kuliner khas{'\n'}Pulau Dewata{'\n'}</Text>
+        <Text style={styles.subtitle}>Temukan warung kuliner khas{'\n'}Pulau Dewata Bali{'\n'}</Text>
         <Text style={styles.ver}>ver. {ver}{'\n\n'}</Text>
         <View style={styles.loadingContainer}>
           <Spinner color="#fff" style={styles.spinner} />
-          <Text style={styles.loadingMsg}>{msg}</Text>
+          <Text style={styles.loadingMsg}>{`  ${msg}`}</Text>
         </View>
       </View>
     );
@@ -75,5 +84,4 @@ Splash.propTypes = {
 const mapStateToProps = state => ({
   appSetting: state.appSetting,
 });
-const mapDispatchToProps = () => ({});
-export default connect(mapStateToProps, mapDispatchToProps)(Splash);
+export default connect(mapStateToProps)(Splash);
