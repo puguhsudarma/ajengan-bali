@@ -1,6 +1,6 @@
 import { ToastAndroid } from 'react-native';
 
-export const AlertGravity = (text, duration = 'long', position = 'bottom') => {
+export const toastGravity = (text, duration = 'long', position = 'bottom') => {
   let dur = null;
   let grav = null;
   if (duration === 'long') {
@@ -20,7 +20,7 @@ export const AlertGravity = (text, duration = 'long', position = 'bottom') => {
   return ToastAndroid.showWithGravity(text, dur, grav);
 };
 
-export const Alert = (text, duration = 'long') => {
+export const toast = (text, duration = 'long') => {
   const dur = (duration === 'long') ? ToastAndroid.LONG : ToastAndroid.SHORT;
   return ToastAndroid.show(text, dur);
 };

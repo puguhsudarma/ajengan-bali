@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Container,
-  Content,
-} from 'native-base';
+import { Container, Content } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';

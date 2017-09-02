@@ -9,6 +9,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this._onBackPress = this._onBackPress.bind(this);
+    this._isRootScreen = this._isRootScreen.bind(this);
   }
 
   componentDidMount() {
@@ -28,11 +29,21 @@ class App extends Component {
       return true;
     }
 
-    if (nav.index === 0) {
+    if (this._isRootScreen(nav)) {
       return false;
     }
     dispatch(NavigationActions.back());
     return true;
+  }
+
+  _isRootScreen(navigator) {
+    if (navigator.index === null) {
+      return true;
+    }
+    if (navigator.index > 0) {
+      return false;
+    }
+    return !navigator.routes || !navigator.routes.find(route => !this._isRootScreen(route));
   }
 
   render() {

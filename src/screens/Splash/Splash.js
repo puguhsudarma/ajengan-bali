@@ -47,7 +47,7 @@ class Splash extends Component {
         }));
       });
     } catch (err) {
-      this.setState({ msg: err });
+      this.setState({ msg: err.message });
     }
   }
 

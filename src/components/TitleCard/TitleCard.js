@@ -1,10 +1,10 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import styles from './TitleCard.Style';
 
 const TitleCard = ({ children, uppercase, style }) => (
-  <Text style={{ ...styles.titleCard, ...style }}>
+  <Text style={StyleSheet.flatten([styles.titleCard, { ...style }])}>
     {
       (uppercase && children.toUpperCase()) ||
       (!uppercase && children)
