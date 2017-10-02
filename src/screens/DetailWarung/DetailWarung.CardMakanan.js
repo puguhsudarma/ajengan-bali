@@ -17,19 +17,19 @@ import StarRating from 'react-native-star-rating';
 import styles from './DetailWarung.Style';
 import TitleCard from '../../components/TitleCard/TitleCard';
 
-const RenderItem = ({ nama, gambar, rating, onPressNav, maxRating }) => (
+const RenderItem = ({ item, onPressNav, maxRating }) => (
   <ListItem thumbnail onPress={onPressNav}>
     <Left>
-      <Thumbnail square size={80} source={gambar} />
+      <Thumbnail square size={80} source={{ uri: item.picture }} />
     </Left>
     <Body>
-      <Text>{nama}</Text>
+      <Text>{item.nama}</Text>
       <View style={styles.StarContainer}>
         <StarRating
           disabled
           starSize={15}
           maxStars={maxRating}
-          rating={rating}
+          rating={item.totalRating}
           starColor={styles.colorStar}
         />
       </View>
@@ -43,36 +43,34 @@ const RenderItem = ({ nama, gambar, rating, onPressNav, maxRating }) => (
 );
 
 RenderItem.propTypes = {
-  nama: PropTypes.string.isRequired,
-  gambar: PropTypes.oneOfType([PropTypes.number]).isRequired,
-  rating: PropTypes.number.isRequired,
+  item: PropTypes.shape().isRequired,
   onPressNav: PropTypes.func.isRequired,
   maxRating: PropTypes.number.isRequired,
 };
 
-const CardMakanan = ({ data, navigate, maxRating }) => (
+const CardMakanan = ({ data, maxRating, selectedData }) => (
   <Card style={styles.card}>
     <CardItem header>
       <TitleCard>Daftar Menu Makanan</TitleCard>
     </CardItem>
     <FlatList
       data={data}
-      keyExtractor={item => item.id}
-      renderItem={item => (
-        <RenderItem
-          {...item}
+      keyExtractor={item => item.key}
+      renderItem={
+        ({ item }) => (<RenderItem
+          item={item}
           maxRating={maxRating}
-          onPressNav={() => navigate('makanan')}
-        />
-      )}
+          onPressNav={() => selectedData(item)}
+        />)
+      }
     />
   </Card>
 );
 
 CardMakanan.propTypes = {
-  data: PropTypes.arrayOf().isRequired,
-  navigate: PropTypes.func.isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   maxRating: PropTypes.number.isRequired,
+  selectedData: PropTypes.func.isRequired,
 };
 
 export default CardMakanan;

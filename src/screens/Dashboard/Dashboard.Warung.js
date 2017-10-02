@@ -13,12 +13,12 @@ import {
   Thumbnail,
 } from 'native-base';
 import StarRating from 'react-native-star-rating';
-import Loader from '../../HOC/Loader.HOC';
+import Loader from '../../HOC/Loader/Loader';
 import styles from './Dashboard.Style';
 
 // Render Item
-const RenderWarungItem = ({ item, maxRating, navigate }) => (
-  <ListItem thumbnail onPress={() => navigate(item.navigate)}>
+const RenderWarungItem = ({ item, maxRating, navigate, selected }) => (
+  <ListItem thumbnail onPress={() => { selected(item); navigate('Auth.DetailWarung'); }}>
     <Left>
       <Thumbnail square size={80} source={{ uri: item.picture }} />
     </Left>
@@ -37,7 +37,7 @@ const RenderWarungItem = ({ item, maxRating, navigate }) => (
       </View>
     </Body>
     <Right>
-      <Button transparent onPress={() => navigate(item.navigate)}>
+      <Button transparent onPress={() => { selected(item); navigate('Auth.DetailWarung'); }}>
         <Text>View</Text>
       </Button>
     </Right>
@@ -48,30 +48,35 @@ RenderWarungItem.propTypes = {
   item: PropTypes.shape().isRequired,
   maxRating: PropTypes.number.isRequired,
   navigate: PropTypes.func.isRequired,
+  selected: PropTypes.func.isRequired,
 };
 
 // Flat List
-const ListWarung = ({ loading, data, maxRating, navigate, refreshCallback }) => (
+const ListWarung = ({ loading, data, maxRating, navigate, refreshCallback, selected }) => (
   <FlatList
     data={data}
     refreshing={loading}
-    keyExtractor={item => item.id}
+    keyExtractor={item => item.key}
     onRefresh={refreshCallback}
     renderItem={
-      ({ item }) => <RenderWarungItem item={item} maxRating={maxRating} navigate={navigate} />
+      ({ item }) =>
+        (<RenderWarungItem
+          item={item}
+          maxRating={maxRating}
+          navigate={navigate}
+          selected={selected}
+        />)
     }
   />
 );
 
 ListWarung.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  maxRating: PropTypes.number,
+  maxRating: PropTypes.number.isRequired,
   navigate: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   refreshCallback: PropTypes.func.isRequired,
-};
-ListWarung.defaultProps = {
-  maxRating: 5,
+  selected: PropTypes.func.isRequired,
 };
 
 export default Loader('data')(ListWarung);

@@ -12,39 +12,39 @@ import StarRating from 'react-native-star-rating';
 import TitleCard from '../../components/TitleCard/TitleCard';
 import styles from './DetailWarung.Style';
 
-const CardDetail = ({ nama, gambar, range, daerah, alamat, deskripsi, rating, maxRating }) => (
+const CardDetail = ({ data, maxRating }) => (
   <Card style={styles.card}>
     <CardItem>
       <Body>
-        <TitleCard>{nama}</TitleCard>
+        <TitleCard>{data.nama}</TitleCard>
       </Body>
     </CardItem>
     <CardItem cardBody>
-      <Image style={styles.warungImage} resizeMode="center" source={{ uri: gambar }} />
+      <Image style={styles.warungImage} resizeMode="center" source={{ uri: data.picture }} />
     </CardItem>
     <CardItem>
-      <Icon active name="bus" />
-      <Text>{`${range} Km`}</Text>
+      <Icon active name="bus" style={styles.iconColor} />
+      <Text>{`${data.range} Km`}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="pin" />
-      <Text>{daerah}</Text>
+      <Icon active name="pin" style={styles.iconColor} />
+      <Text>{data.daerah}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="md-map" />
-      <Text>{alamat}</Text>
+      <Icon active name="map" style={styles.iconColor} />
+      <Text>{data.alamat}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="list" />
-      <Text>{deskripsi}</Text>
+      <Icon active name="list" style={styles.iconColor} />
+      <Text>{data.deskripsi}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="md-star" />
+      <Icon active name="star" style={styles.iconColor} />
       <StarRating
         disabled
         starSize={30}
         maxStars={maxRating}
-        rating={rating}
+        rating={data.totalRating}
         starColor={styles.colorStar}
       />
     </CardItem>
@@ -52,13 +52,7 @@ const CardDetail = ({ nama, gambar, range, daerah, alamat, deskripsi, rating, ma
 );
 
 CardDetail.propTypes = {
-  nama: PropTypes.string.isRequired,
-  gambar: PropTypes.string.isRequired,
-  range: PropTypes.number.isRequired,
-  daerah: PropTypes.string.isRequired,
-  alamat: PropTypes.string.isRequired,
-  deskripsi: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
+  data: PropTypes.shape().isRequired,
   maxRating: PropTypes.number.isRequired,
 };
 

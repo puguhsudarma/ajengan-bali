@@ -1,6 +1,7 @@
 import { NavigationActions } from 'react-navigation';
 import AppNavigator from '../routers';
 import logo from '../images/logo.png';
+import avatar from '../images/avatar5.png';
 
 export const navigatorState = AppNavigator.router.getStateForAction(NavigationActions.init());
 export const customNavInitState = {
@@ -8,34 +9,35 @@ export const customNavInitState = {
 };
 
 export const warungInitState = {
-  listData: [],
-  selectedData: {},
-  isFetching: false,
-  isFetched: false,
-  error: null,
-  markers: [],
+  list: [],
+  selected: {},
+  reviews: [],
+  thisUserReview: {},
+  error: [],
 };
 
 export const makananInitState = {
-  listData: [],
-  listSelectedData: [],
-  selectedData: {},
-  isFetching: false,
-  isFetched: false,
-  error: null,
+  list: [],
+  listMakananBySelectedWarung: [],
+  selected: {},
+  reviews: [],
+  thisUserReview: {},
+  error: [],
 };
 
 export const appSetting = {
   title: 'Ajegli',
   subtitle: 'Powered By React Native',
-  ver: '0.1-alpha',
+  ver: '0.4-alpha',
   logo,
   maxRating: 5,
   position: {},
   userLogin: {
+    avatar,
     isLogin: false,
-    displayName: null,
-    email: null,
-    uid: null,
+    displayName: '',
+    email: '',
+    uid: '',
   },
+  error: [],
 };

@@ -5,10 +5,10 @@ import {
   Icon,
   Button,
 } from 'native-base';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 const LeftItem = ({ leftItem }) => {
-  if (!_.isEmpty(leftItem)) {
+  if (!isEmpty(leftItem)) {
     const { funcPress, icon } = leftItem;
     return (<Left>
       <Button transparent onPress={funcPress}>

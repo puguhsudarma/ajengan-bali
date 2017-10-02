@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import TitleCard from '../../components/TitleCard/TitleCard';
 import styles from './DetailMakanan.Style';
 
-const CardDetailWarung = ({ nama, range, daerah, alamat, displayButton, navigate }) => (
+const CardDetailWarung = ({ item, displayButton, navigate }) => (
   <Card style={styles.card}>
     <CardItem>
       <Body>
@@ -19,20 +19,20 @@ const CardDetailWarung = ({ nama, range, daerah, alamat, displayButton, navigate
       </Body>
     </CardItem>
     <CardItem>
-      <Icon active name="home" />
-      <Text>{nama}</Text>
+      <Icon active name="home" style={styles.iconColor} />
+      <Text>{item.nama}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="bus" />
-      <Text>{`${range} Km`}</Text>
+      <Icon active name="bus" style={styles.iconColor} />
+      <Text>{`${item.range} Km`}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="pin" />
-      <Text>{daerah}</Text>
+      <Icon active name="pin" style={styles.iconColor} />
+      <Text>{item.daerah}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="map" />
-      <Text>{alamat}</Text>
+      <Icon active name="map" style={styles.iconColor} />
+      <Text>{item.alamat}</Text>
     </CardItem>
     {
       !displayButton &&
@@ -47,10 +47,7 @@ const CardDetailWarung = ({ nama, range, daerah, alamat, displayButton, navigate
 );
 
 CardDetailWarung.propTypes = {
-  nama: PropTypes.string.isRequired,
-  range: PropTypes.number.isRequired,
-  daerah: PropTypes.string.isRequired,
-  alamat: PropTypes.string.isRequired,
+  item: PropTypes.shape().isRequired,
   displayButton: PropTypes.bool.isRequired,
   navigate: PropTypes.func.isRequired,
 };

@@ -3,22 +3,29 @@ import * as actionType from '../actions/actionType';
 import { makananInitState } from './initState';
 
 const makananReducer = createReducer(makananInitState, {
-  [actionType.FETCH_MAKANAN_DATA_FULLFILED]: (state, action) => ({
+  [actionType.FETCH_DATA_LIST_MAKANAN]: (state, action) => ({
     ...state,
-    listData: [...action.payload],
-    isFetching: false,
-    isFetched: true,
+    list: [...action.payload],
   }),
-  [actionType.FETCH_MAKANAN_DATA_REJECTED]: (state, action) => ({
+  [actionType.FETCH_DATA_LIST_MAKANAN_BY_SELECTED_WARUNG]: (state, action) => ({
     ...state,
-    isFetching: false,
-    isFetched: false,
-    error: action.payload,
+    listMakananBySelectedWarung: [...action.payload],
   }),
-  [actionType.FETCH_MAKANAN_DATA_PENDING]: state => ({
+  [actionType.SELECT_DATA_MAKANAN]: (state, action) => ({
     ...state,
-    isFetching: true,
-    error: null,
+    selected: action.payload,
+  }),
+  [actionType.FETCH_DATA_LIST_REVIEW_MAKANAN]: (state, action) => ({
+    ...state,
+    reviews: [...action.payload.reviews],
+    thisUserReview: action.payload.thisUserReview,
+  }),
+  [actionType.ERROR_MAKANAN]: (state, action) => ({
+    ...state,
+    error: [
+      ...state.error,
+      action.payload,
+    ],
   }),
 });
 

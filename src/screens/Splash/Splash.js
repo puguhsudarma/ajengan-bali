@@ -4,14 +4,15 @@ import {
   Text,
   View,
   Image,
+  StatusBar,
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
 import styles from './Splash.Style';
+import * as actionType from '../../actions/actionType';
 import GeoLocation from '../../components/CoordinateGps/CoordinateGps';
 import firebase from '../../config/firebase';
-import * as actionCreator from '../../actions/actionCreator';
 
 class Splash extends Component {
   constructor(props) {
@@ -25,23 +26,29 @@ class Splash extends Component {
   async componentWillMount() {
     const { dispatch: navDispatch } = this.props.navigation;
     const { dispatch } = this.props;
-    this.setState({ msg: 'Mencari lokasi koordinat...' });
+
     try {
-      const pos = await GeoLocation();
-      dispatch(actionCreator.setLocation(pos));
+      this.setState({ msg: 'Mencari lokasi koordinat...' });
+      const position = await GeoLocation();
+      dispatch({
+        type: actionType.FETCH_DATA_COORDINATE_LOCATION,
+        payload: position,
+      });
       this.setState({ msg: 'Koordinat pengguna berhasil didapat...' });
+
       this.authListen = firebase.auth().onAuthStateChanged((user) => {
-        this.setState({ msg: 'Menyiapkan aplikasi...' });
         if (user) {
           const { uid, displayName, email } = user;
-          dispatch(actionCreator.setUser({ uid, displayName, email }));
-          navDispatch(NavigationActions.reset({
+          dispatch({
+            type: actionType.FETCH_DATA_THIS_USER,
+            payload: { email, displayName, uid },
+          });
+          return navDispatch(NavigationActions.reset({
             index: 0,
             actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
           }));
-          return;
         }
-        navDispatch(NavigationActions.reset({
+        return navDispatch(NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({ routeName: 'Unauth.Login' })],
         }));
@@ -62,6 +69,7 @@ class Splash extends Component {
     const { title, logo, ver } = this.props.appSetting;
     return (
       <View style={styles.wrapper}>
+        <StatusBar barStyle="light-content" backgroundColor="#004D40" />
         <Image source={logo} style={styles.logo} />
         <Text style={styles.title}>
           {`\nSelamat Datang di ${title}\nAjengan Bali App\n\n`}
@@ -78,7 +86,9 @@ class Splash extends Component {
 }
 
 Splash.propTypes = {
+  dispatch: PropTypes.func.isRequired,
   appSetting: PropTypes.shape().isRequired,
+  navigation: PropTypes.shape().isRequired,
 };
 
 const mapStateToProps = state => ({

@@ -2,7 +2,6 @@ import React from 'react';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import reduxLogger from 'redux-logger';
-import reduxThunk from 'redux-thunk';
 import appSettingReducer from '../reducers/AppSetting.Reducer';
 import navReducer, { customNavReducer } from '../reducers/Nav.Reducer';
 import warungReducer from '../reducers/Warung.Reducer';
@@ -17,7 +16,6 @@ const reducerCombined = combineReducers({
   makanan: makananReducer,
 });
 const middleware = applyMiddleware(
-  reduxThunk,
   reduxLogger,
 );
 const store = createStore(reducerCombined, middleware);

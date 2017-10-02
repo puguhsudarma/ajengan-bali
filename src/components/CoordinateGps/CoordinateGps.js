@@ -27,15 +27,8 @@ const dialogPermission = () => (
 
 const geoLocation = async () => {
   try {
-    // check permission
-    if (await !PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)) {
-      throw new Error('Akses Geolocation ditolak.');
-    }
-
-    if (await !dialogPermission()) {
-      throw new Error('Geolocation harus diaktifkan.');
-    }
-
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    await dialogPermission();
     return coordinate();
   } catch (err) {
     throw err;

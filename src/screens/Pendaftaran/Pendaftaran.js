@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import { validateEmail } from '../../libs/helper';
 import firebase from '../../config/firebase';
-import * as actionCreator from '../../actions/actionCreator';
+import * as actionType from '../../actions/actionType';
 import Header from '../../components/Header/Header';
 import Form from './Pendaftaran.Form';
 
@@ -71,13 +71,26 @@ class Pendaftaran extends Component {
       const daftar = await firebase.auth().createUserWithEmailAndPassword(email, password);
       const update = await daftar.updateProfile({ displayName: nama });
       await firebase.database().ref(`users/${update.uid}`).set(dataWrite);
-      dispatch(actionCreator.setUser({ email, displayName: update.displayName, uid: update.uid }));
+      dispatch({
+        type: actionType.DAFTAR_THIS_USER,
+        payload: {
+          email,
+          displayName: update.displayName,
+          uid: update.uid,
+        },
+      });
       navDispatch(NavigationActions.reset({
         index: 0,
         actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
       }));
     } catch (err) {
-      this.setState({ loading: false, msg: err.message });
+      dispatch({
+        type: actionType.ERROR_APP_SETTING,
+        payload: err,
+      });
+      this.setState({ msg: err.message });
+    } finally {
+      this.setState({ loading: false });
     }
   }
 

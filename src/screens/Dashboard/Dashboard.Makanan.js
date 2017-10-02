@@ -14,11 +14,11 @@ import {
 } from 'native-base';
 import StarRating from 'react-native-star-rating';
 import styles from './Dashboard.Style';
-import Loader from '../../HOC/Loader.HOC';
+import Loader from '../../HOC/Loader/Loader';
 
 // Makanan Item
-const RenderMakananItem = ({ item, maxRating, navigate }) => (
-  <ListItem key={item.id} thumbnail onPress={() => navigate(item.navigate)}>
+const RenderMakananItem = ({ item, maxRating, onPress }) => (
+  <ListItem key={item.id} thumbnail onPress={onPress}>
     <Left>
       <Thumbnail square size={80} source={{ uri: item.picture }} />
     </Left>
@@ -38,7 +38,7 @@ const RenderMakananItem = ({ item, maxRating, navigate }) => (
       </View>
     </Body>
     <Right>
-      <Button transparent onPress={() => navigate(item.navigate)}>
+      <Button transparent onPress={onPress}>
         <Text>View</Text>
       </Button>
     </Right>
@@ -48,18 +48,22 @@ const RenderMakananItem = ({ item, maxRating, navigate }) => (
 RenderMakananItem.propTypes = {
   item: PropTypes.shape().isRequired,
   maxRating: PropTypes.number.isRequired,
-  navigate: PropTypes.func.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
 
 // Flat List
-const ListMakanan = ({ data, maxRating, navigate, loading, refreshCallback }) => (
+const ListMakanan = ({ data, maxRating, navigate, loading, refreshCallback, selected }) => (
   <FlatList
     data={data}
     refreshing={loading}
     onRefresh={refreshCallback}
-    keyExtractor={item => item.id}
+    keyExtractor={item => item.key}
     renderItem={
-      ({ item }) => <RenderMakananItem item={item} maxRating={maxRating} navigate={navigate} />
+      ({ item }) => (<RenderMakananItem
+        item={item}
+        maxRating={maxRating}
+        onPress={() => { selected(item); navigate('Auth.DetailMakanan'); }}
+      />)
     }
   />
 );
@@ -67,12 +71,10 @@ const ListMakanan = ({ data, maxRating, navigate, loading, refreshCallback }) =>
 ListMakanan.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   navigate: PropTypes.func.isRequired,
-  maxRating: PropTypes.number,
+  maxRating: PropTypes.number.isRequired,
   loading: PropTypes.bool.isRequired,
   refreshCallback: PropTypes.func.isRequired,
-};
-ListMakanan.defaultProps = {
-  maxRating: 5,
+  selected: PropTypes.func.isRequired,
 };
 
 export default Loader('data')(ListMakanan);

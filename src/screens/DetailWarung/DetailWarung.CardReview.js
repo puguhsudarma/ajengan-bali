@@ -13,28 +13,26 @@ import StarRating from 'react-native-star-rating';
 import TitleCard from '../../components/TitleCard/TitleCard';
 import styles from './DetailWarung.Style';
 
-const RenderItem = ({ nama, rating, komentar, maxRating }) => (
+const RenderItem = ({ item, maxRating }) => (
   <ListItem>
     <Body>
-      <Text style={styles.cardReviewNama}>{nama}</Text>
+      <Text style={styles.cardReviewNama}>{item.nama}</Text>
       <View style={styles.cardReviewStarContainer}>
         <StarRating
           disabled
           starSize={15}
           maxStars={maxRating}
-          rating={rating}
+          rating={item.rating}
           starColor={styles.colorStar}
         />
       </View>
-      <Text note>{komentar}</Text>
+      <Text note>{item.review}</Text>
     </Body>
   </ListItem>
 );
 
 RenderItem.propTypes = {
-  nama: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
-  komentar: PropTypes.string.isRequired,
+  item: PropTypes.shape().isRequired,
   maxRating: PropTypes.number.isRequired,
 };
 
@@ -44,14 +42,15 @@ const CardReview = ({ data, maxRating }) => (
       <TitleCard>Review Warung</TitleCard>
     </CardItem>
     <FlatList
-      dataArray={data}
-      renderRow={item => <RenderItem {...item} maxRating={maxRating} />}
+      data={data}
+      keyExtractor={item => item.key}
+      renderItem={({ item }) => (<RenderItem item={item} maxRating={maxRating} />)}
     />
   </Card>
 );
 
 CardReview.propTypes = {
-  data: PropTypes.arrayOf().isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   maxRating: PropTypes.number.isRequired,
 };
 

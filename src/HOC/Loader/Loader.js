@@ -1,10 +1,11 @@
 import React from 'react';
 import { Spinner, View } from 'native-base';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
+import styles from './Loader.Style';
 
 const LoaderHOC = propName => WrappedComponent => props => (
-  _.isEmpty(props[propName]) ?
-    <View style={{ flex: 1, justifyContent: 'center' }}>
+  isEmpty(props[propName]) ?
+    <View style={styles.container}>
       <Spinner color="blue" />
     </View>
     :

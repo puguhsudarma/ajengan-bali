@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
-import * as actionCreator from '../../actions/actionCreator';
+import * as actionType from '../../actions/actionType';
 import firebase from '../../config/firebase';
 import { validateEmail } from '../../libs/helper';
 import Title from './Login.Title';
@@ -52,18 +52,32 @@ class Login extends Component {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((res) => {
         const { displayName, email: emailLogin, uid } = res;
-        dispatch(actionCreator.setUser({ displayName, email: emailLogin, uid }));
+        dispatch({
+          type: actionType.LOGIN_THIS_USER,
+          payload: {
+            displayName,
+            email: emailLogin,
+            uid,
+          },
+        });
         navDispatch(NavigationActions.reset({
           index: 0,
           actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
         }));
       })
       .catch((err) => {
+        dispatch({
+          type: actionType.ERROR_APP_SETTING,
+          payload: err,
+        });
         if (err.code === 'auth/user-not-found') {
-          this.setState({ loading: false, msg: 'Akun pengguna tidak ditemukan.' });
+          this.setState({ msg: 'Akun pengguna tidak ditemukan.' });
           return;
         }
-        this.setState({ loading: false, msg: err.message });
+        this.setState({ msg: err.message });
+      })
+      .finally(() => {
+        this.setState({ loading: false });
       });
   }
 

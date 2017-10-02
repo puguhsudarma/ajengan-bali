@@ -3,12 +3,6 @@ const styles = {
     marginLeft: 5,
     marginRight: 5,
   },
-  modal: {
-    padding: 20,
-    margin: 5,
-    backgroundColor: '#fff',
-    flexGrow: 1,
-  },
   warungImage: {
     height: 200,
     flex: 1,
@@ -30,6 +24,36 @@ const styles = {
     width: 100,
     marginTop: 5,
     marginLeft: 10,
+  },
+  iconColor: {
+    color: 'gray',
+  },
+
+  modal: {
+    padding: 20,
+    margin: 5,
+    backgroundColor: '#fff',
+    flexGrow: 1,
+  },
+  modalTitleCard: {
+    marginBottom: 20,
+  },
+  modalContentContainer: {
+    flexDirection: 'row',
+  },
+  modalInputContainer: {
+    marginTop: 20,
+  },
+  modalButtonContainer: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+  },
+  modalButton: {
+    marginTop: 20,
+    marginLeft: 20,
+  },
+  modalTextButton: {
+    color: 'brown',
   },
 };
 

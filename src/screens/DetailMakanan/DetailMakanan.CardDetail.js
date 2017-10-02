@@ -13,35 +13,39 @@ import TitleCard from '../../components/TitleCard/TitleCard';
 import styles from './DetailMakanan.Style';
 import { numberWithCommas } from '../../libs/helper';
 
-const CardDetail = ({ nama, gambar, kategori, harga, deskripsi, rating, maxRating }) => (
+const CardDetail = ({ item, maxRating }) => (
   <Card style={styles.card}>
     <CardItem>
       <Body>
-        <TitleCard>{nama}</TitleCard>
+        <TitleCard>{item.nama}</TitleCard>
       </Body>
     </CardItem>
     <CardItem cardBody>
-      <Image style={styles.makananImage} resizeMode="center" source={{ uri: gambar }} />
+      <Image
+        style={styles.makananImage}
+        resizeMode="center"
+        source={{ uri: item.picture }}
+      />
     </CardItem>
     <CardItem>
-      <Icon active name="md-browsers" />
-      <Text>{kategori}</Text>
+      <Icon active name="md-browsers" style={styles.iconColor} />
+      <Text>{item.kategori}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="md-cash" />
-      <Text>{`Rp. ${numberWithCommas(harga)}`}</Text>
+      <Icon active name="md-cash" style={styles.iconColor} />
+      <Text>{`Rp. ${numberWithCommas(item.harga)}`}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="list" />
-      <Text>{deskripsi}</Text>
+      <Icon active name="list" style={styles.iconColor} />
+      <Text>{item.deskripsi}</Text>
     </CardItem>
     <CardItem>
-      <Icon active name="md-star" />
+      <Icon active name="md-star" style={styles.iconColor} />
       <StarRating
         starSize={30}
         disabled
         maxStars={maxRating}
-        rating={rating}
+        rating={item.totalRating}
         starColor={styles.colorStar}
       />
     </CardItem>
@@ -49,12 +53,7 @@ const CardDetail = ({ nama, gambar, kategori, harga, deskripsi, rating, maxRatin
 );
 
 CardDetail.propTypes = {
-  nama: PropTypes.string.isRequired,
-  gambar: PropTypes.oneOfType([PropTypes.number]).isRequired,
-  kategori: PropTypes.string.isRequired,
-  harga: PropTypes.number.isRequired,
-  deskripsi: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
+  item: PropTypes.shape().isRequired,
   maxRating: PropTypes.number.isRequired,
 };
 
