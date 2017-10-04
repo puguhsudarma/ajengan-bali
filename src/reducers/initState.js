@@ -10,6 +10,7 @@ export const customNavInitState = {
 
 export const warungInitState = {
   list: [],
+  listSearched: [],
   selected: {},
   reviews: [],
   thisUserReview: {},
@@ -18,6 +19,7 @@ export const warungInitState = {
 
 export const makananInitState = {
   list: [],
+  listSearched: [],
   listMakananBySelectedWarung: [],
   selected: {},
   reviews: [],
@@ -35,9 +37,6 @@ export const appSetting = {
   userLogin: {
     avatar,
     isLogin: false,
-    displayName: '',
-    email: '',
-    uid: '',
   },
   error: [],
 };

@@ -36,22 +36,8 @@ const MapWarung = ({ regionMap, marker, onRegionChange }) => (
 );
 
 MapWarung.propTypes = {
-  regionMap: PropTypes.shape({
-    latitude: PropTypes.number,
-    longitude: PropTypes.number,
-    latitudeDelta: PropTypes.number,
-    longitudeDelta: PropTypes.number,
-  }).isRequired,
-  marker: PropTypes.arrayOf(PropTypes.shape({
-    coordinate: PropTypes.shape({
-      latitude: PropTypes.number,
-      longitude: PropTypes.number,
-    }),
-    info: PropTypes.shape({
-      title: PropTypes.string,
-      image: PropTypes.string,
-    }),
-  })).isRequired,
+  regionMap: PropTypes.shape().isRequired,
+  marker: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   onRegionChange: PropTypes.func.isRequired,
 };
 

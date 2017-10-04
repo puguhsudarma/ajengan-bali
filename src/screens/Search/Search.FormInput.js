@@ -10,11 +10,13 @@ import {
   Input,
   Item,
   Picker,
+  Spinner,
 } from 'native-base';
 import PropTypes from 'prop-types';
 import TitleCard from '../../components/TitleCard/TitleCard';
 import styles from './Search.Style';
 
+// Text Input
 const InputQuery = ({ onChangeText }) => (
   <Item>
     <Icon active name="search" />
@@ -26,12 +28,12 @@ InputQuery.propTypes = {
   onChangeText: PropTypes.func.isRequired,
 };
 
+// Picker With State
 class PickerWithState extends Component {
   constructor(props) {
     super(props);
-    const { value } = this.props;
     this.state = {
-      selectedValue: value,
+      selectedValue: '',
     };
     this._onValueChange = this._onValueChange.bind(this);
   }
@@ -39,7 +41,9 @@ class PickerWithState extends Component {
   _onValueChange(value) {
     const { onValueChange } = this.props;
     this.setState(
-      { selectedValue: value },
+      {
+        selectedValue: value,
+      },
       () => onValueChange(value),
     );
   }
@@ -54,71 +58,96 @@ class PickerWithState extends Component {
         selectedValue={selectedValue}
         onValueChange={this._onValueChange}
       >
-        {data.map(item => <Item {...item} />)}
+        {
+          data.map(item => (<Item
+            key={item.value}
+            label={item.label}
+            value={item.value}
+          />))
+        }
       </Picker>
     );
   }
 }
 
 PickerWithState.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   data: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    label: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   })).isRequired,
   onValueChange: PropTypes.func.isRequired,
 };
 
-PickerWithState.defaultProps = {
-  value: null,
-};
-
-const FormInput = ({ onChangeText, InputJenisData, InputKategoriData, onSearch }) => (
-  <Card style={styles.cardContainer}>
-    <CardItem header>
-      <Body>
-        <TitleCard>Pencarian</TitleCard>
-      </Body>
-    </CardItem>
-    <View style={styles.formContainer}>
-      <InputQuery onChangeText={onChangeText} />
-      <PickerWithState
-        value={InputJenisData.value}
-        data={InputJenisData.data}
-        onValueChange={InputJenisData.onValueChange}
-      />
-      {
-        InputJenisData.value === 2 &&
+// Form Input
+const FormInput = ({
+  onChangeText,
+  InputJenisData,
+  InputKategoriMakanan,
+  jenisData,
+  message,
+  loading,
+  onSearch,
+}) =>
+  (
+    <Card style={styles.cardContainer}>
+      <CardItem header>
+        <Body>
+          <TitleCard>Pencarian</TitleCard>
+        </Body>
+      </CardItem>
+      <View style={styles.formContainer}>
+        <InputQuery onChangeText={onChangeText} />
+        <Text style={styles.textMsg}>{message}</Text>
         <PickerWithState
-          value={InputKategoriData.value}
-          data={InputKategoriData.data}
-          onValueChange={InputKategoriData.onValueChange}
+          data={InputJenisData.data}
+          onValueChange={InputJenisData.onValueChange}
         />
-      }
-    </View>
-    <CardItem footer style={styles.formFooterContainer}>
-      <Button success small iconLeft onPress={onSearch}>
-        <Icon name="search" />
-        <Text>Cari</Text>
-      </Button>
-    </CardItem>
-  </Card >
-);
+        {
+          jenisData === 'makanan' &&
+          <PickerWithState
+            data={InputKategoriMakanan.data}
+            onValueChange={InputKategoriMakanan.onValueChange}
+          />
+        }
+
+      </View>
+      <CardItem footer style={styles.formFooterContainer}>
+        <Button
+          success
+          iconLeft
+          disabled={loading}
+          onPress={onSearch}
+        >
+          {
+            loading ?
+              <Spinner color="#fff" /> :
+              <Icon name="search" />
+          }
+          <Text>Cari</Text>
+        </Button>
+      </CardItem>
+    </Card >
+  );
 
 FormInput.propTypes = {
   onChangeText: PropTypes.func.isRequired,
   InputJenisData: PropTypes.shape({
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    data: PropTypes.arrayOf(),
+    data: PropTypes.arrayOf(PropTypes.shape()),
     onValueChange: PropTypes.func,
   }).isRequired,
-  InputKategoriData: PropTypes.shape({
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    data: PropTypes.arrayOf(),
+  InputKategoriMakanan: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape()),
     onValueChange: PropTypes.func,
   }).isRequired,
+  jenisData: PropTypes.string.isRequired,
   onSearch: PropTypes.func.isRequired,
+  message: PropTypes.string,
+  loading: PropTypes.bool.isRequired,
+};
+
+FormInput.defaultProps = {
+  message: '',
 };
 
 export default FormInput;

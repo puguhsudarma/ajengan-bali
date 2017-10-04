@@ -33,7 +33,7 @@ class Dashboard extends Component {
     this._handleClickItemMakanan = this._handleClickItemMakanan.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this._fetchWarung();
     this._fetchMakanan();
   }
@@ -112,7 +112,7 @@ class Dashboard extends Component {
       <Container>
         <Header
           hasTabs
-          subtitle={appSetting.title}
+          subtitle={appSetting.title.toUpperCase()}
           title="Dashboard"
           leftItem={{
             icon: 'menu',

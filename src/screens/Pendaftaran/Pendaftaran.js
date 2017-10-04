@@ -77,6 +77,7 @@ class Pendaftaran extends Component {
           email,
           displayName: update.displayName,
           uid: update.uid,
+          ...dataWrite,
         },
       });
       navDispatch(NavigationActions.reset({

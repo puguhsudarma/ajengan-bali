@@ -20,6 +20,10 @@ const makananReducer = createReducer(makananInitState, {
     reviews: [...action.payload.reviews],
     thisUserReview: action.payload.thisUserReview,
   }),
+  [actionType.FETCH_SEARCHED_LIST_MAKANAN]: (state, action) => ({
+    ...state,
+    listSearched: action.payload,
+  }),
   [actionType.ERROR_MAKANAN]: (state, action) => ({
     ...state,
     error: [

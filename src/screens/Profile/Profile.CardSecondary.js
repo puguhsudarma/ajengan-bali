@@ -10,32 +10,35 @@ import PropTypes from 'prop-types';
 import styles from './Profile.Style';
 import TitleCard from '../../components/TitleCard/TitleCard';
 
-const CardSecondary = ({ username, alamat, telepon }) => (
+const Item = ({ icon, item }) => (
+  <CardItem>
+    <Icon active style={styles.iconDetail} name={icon} />
+    <Text>{item}</Text>
+  </CardItem>
+);
+
+Item.propTypes = {
+  icon: PropTypes.string.isRequired,
+  item: PropTypes.string.isRequired,
+};
+
+const CardSecondary = ({ item }) => (
   <Card style={styles.card}>
     <CardItem header>
       <Body>
         <TitleCard>Data Profil</TitleCard>
       </Body>
     </CardItem>
-    <CardItem>
-      <Icon active style={styles.iconDetail} name="people" />
-      <Text>{username}</Text>
-    </CardItem>
-    <CardItem>
-      <Icon active style={styles.iconDetail} name="pin" />
-      <Text>{alamat}</Text>
-    </CardItem>
-    <CardItem>
-      <Icon active style={styles.iconDetail} name="call" />
-      <Text>{telepon}</Text>
-    </CardItem>
+    <Item icon="people" item={item.nama} />
+    <Item icon="outlet" item={item.username} />
+    <Item icon="mail" item={item.email} />
+    <Item icon="home" item={item.alamat} />
+    <Item icon="call" item={item.telp.toString()} />
   </Card>
 );
 
 CardSecondary.propTypes = {
-  username: PropTypes.string.isRequired,
-  alamat: PropTypes.string.isRequired,
-  telepon: PropTypes.string.isRequired,
+  item: PropTypes.shape().isRequired,
 };
 
 export default CardSecondary;

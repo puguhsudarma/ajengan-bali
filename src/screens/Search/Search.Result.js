@@ -18,41 +18,32 @@ import StarRating from 'react-native-star-rating';
 import TitleCard from '../../components/TitleCard/TitleCard';
 import styles from './Search.Style';
 
-const RenderItem = ({
-  navigate,
-  path,
-  gambar,
-  nama,
-  daerah,
-  range,
-  maxRating,
-  rating,
-  kategori,
-  jenis }) => (
-    <ListItem thumbnail onPress={navigate(path)}>
+const RenderItem = ({ item, onPress, maxRating, jenisData }) =>
+  (
+    <ListItem thumbnail onPress={() => onPress(item)}>
       <Left>
-        <Thumbnail square size={80} source={{ uri: gambar }} />
+        <Thumbnail square size={80} source={{ uri: item.picture }} />
       </Left>
       <Body>
-        <Text>{nama}</Text>
+        <Text>{item.nama}</Text>
         {
-          jenis !== 'warung' &&
-          <Text note><Icon name="folder" style={styles.iconList} /> {`Kategori : ${kategori}`}</Text>
+          jenisData === 'makanan' &&
+          <Text note><Icon name="folder" style={styles.iconList} /> {`Kategori : ${item.kategori}`}</Text>
         }
-        <Text note><Icon name="pin" style={styles.iconList} /> {daerah}</Text>
-        <Text note><Icon name="bus" style={styles.iconList} /> {`Jarak : ${range} Km`}</Text>
+        <Text note><Icon name="pin" style={styles.iconList} /> {item.daerah}</Text>
+        <Text note><Icon name="bus" style={styles.iconList} /> {`Jarak : ${item.jarak} Km`}</Text>
         <View style={styles.starContainer}>
           <StarRating
             disabled
             starSize={15}
             maxStars={maxRating}
-            rating={rating}
+            rating={item.totalRating}
             starColor={styles.colorStar}
           />
         </View>
       </Body>
       <Right>
-        <Button transparent onPress={navigate(path)}>
+        <Button transparent onPress={() => onPress(item)}>
           <Text>View</Text>
         </Button>
       </Right>
@@ -60,23 +51,13 @@ const RenderItem = ({
   );
 
 RenderItem.propTypes = {
-  navigate: PropTypes.func.isRequired,
-  path: PropTypes.string.isRequired,
-  gambar: PropTypes.string.isRequired,
-  nama: PropTypes.string.isRequired,
-  daerah: PropTypes.string.isRequired,
-  range: PropTypes.number.isRequired,
+  item: PropTypes.shape().isRequired,
+  onPress: PropTypes.func.isRequired,
   maxRating: PropTypes.number.isRequired,
-  rating: PropTypes.number.isRequired,
-  kategori: PropTypes.string,
-  jenis: PropTypes.string.isRequired,
+  jenisData: PropTypes.string.isRequired,
 };
 
-RenderItem.defaultProps = {
-  kategori: null,
-};
-
-const Result = ({ isSearched, data, navigate, maxRating }) => {
+const Result = ({ isSearched, data, maxRating, onPress, jenisData }) => {
   if (isSearched) {
     return (
       <Card style={styles.cardContainer}>
@@ -87,9 +68,16 @@ const Result = ({ isSearched, data, navigate, maxRating }) => {
         </CardItem>
         <FlatList
           style={styles.listResult}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.key}
           data={data}
-          renderItem={item => <RenderItem {...item} navigate={navigate} maxRating={maxRating} />}
+          renderItem={({ item }) => (
+            <RenderItem
+              item={item}
+              onPress={onPress}
+              jenisData={jenisData}
+              maxRating={maxRating}
+            />
+          )}
         />
       </Card>
     );
@@ -100,7 +88,8 @@ const Result = ({ isSearched, data, navigate, maxRating }) => {
 Result.propTypes = {
   isSearched: PropTypes.bool.isRequired,
   data: PropTypes.arrayOf().isRequired,
-  navigate: PropTypes.func.isRequired,
+  onPress: PropTypes.func.isRequired,
+  jenisData: PropTypes.string.isRequired,
   maxRating: PropTypes.number.isRequired,
 };
 

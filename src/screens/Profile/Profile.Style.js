@@ -3,23 +3,21 @@ const styles = {
     marginLeft: 5,
     marginRight: 5,
   },
+  cardItem: {
+    backgroundColor: '#004D40',
+  },
+  imageProfileContainer: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'column',
+  },
   imageProfile: {
     borderColor: '#fff',
     borderWidth: 2,
     borderRadius: 500,
-    width: 80,
-    height: 80,
+    width: 140,
+    height: 140,
     marginBottom: 20,
-  },
-  primaryCardNama: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  primaryCardEmail: {
-    color: '#fff',
-    textAlign: 'center',
   },
   iconDetail: {
     color: '#ccc',

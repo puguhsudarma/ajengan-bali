@@ -1,27 +1,25 @@
 import React from 'react';
+import { Image } from 'react-native';
 import {
   Card,
   CardItem,
-  Thumbnail,
-  Text,
+  View,
 } from 'native-base';
 import PropTypes from 'prop-types';
 import styles from './Profile.Style';
 
-const CardPrimary = ({ gambar, nama, email }) => (
+const CardPrimary = ({ gambar }) => (
   <Card style={styles.card}>
-    <CardItem>
-      <Thumbnail source={{ uri: gambar }} style={styles.imageProfile} />
-      <Text style={styles.primaryCardNama}>{nama}</Text>
-      <Text style={styles.primaryCardEmail}>{email}</Text>
+    <CardItem style={styles.cardItem}>
+      <View style={styles.imageProfileContainer}>
+        <Image source={gambar} style={styles.imageProfile} />
+      </View>
     </CardItem>
   </Card>
 );
 
 CardPrimary.propTypes = {
-  gambar: PropTypes.string.isRequired,
-  nama: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
+  gambar: PropTypes.oneOfType([PropTypes.number]).isRequired,
 };
 
 export default CardPrimary;

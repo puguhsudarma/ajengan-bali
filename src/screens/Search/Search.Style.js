@@ -24,6 +24,9 @@ const styles = {
     marginTop: 5,
   },
   colorStar: '#FFDF00',
+  textMsg: {
+    color: 'red',
+  },
 };
 
 export default styles;

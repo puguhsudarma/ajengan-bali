@@ -23,6 +23,10 @@ const warungReducer = createReducer(warungInitState, {
       ...action.payload,
     },
   }),
+  [actionType.FETCH_SEARCHED_LIST_WARUNG]: (state, action) => ({
+    ...state,
+    listSearched: action.payload,
+  }),
   [actionType.ERROR_WARUNG]: (state, action) => ({
     ...state,
     error: [

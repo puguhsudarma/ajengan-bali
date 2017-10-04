@@ -36,12 +36,18 @@ class Splash extends Component {
       });
       this.setState({ msg: 'Koordinat pengguna berhasil didapat...' });
 
-      this.authListen = firebase.auth().onAuthStateChanged((user) => {
+      this.authListen = firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
           const { uid, displayName, email } = user;
+          const detailUser = await firebase.database().ref(`users/${uid}`).once('value');
           dispatch({
             type: actionType.FETCH_DATA_THIS_USER,
-            payload: { email, displayName, uid },
+            payload: {
+              email,
+              displayName,
+              uid,
+              ...detailUser.val(),
+            },
           });
           return navDispatch(NavigationActions.reset({
             index: 0,
@@ -54,6 +60,10 @@ class Splash extends Component {
         }));
       });
     } catch (err) {
+      dispatch({
+        type: actionType.ERROR_APP_SETTING,
+        payload: err,
+      });
       this.setState({ msg: err.message });
     }
   }

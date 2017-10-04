@@ -51,13 +51,18 @@ class Login extends Component {
     // login process
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then((res) => {
-        const { displayName, email: emailLogin, uid } = res;
+        const detailUser = firebase.database().ref(`users/${res.uid}`).once('value');
+        return Promise.all([res, detailUser]);
+      })
+      .then((res) => {
+        const { displayName, email: emailLogin, uid } = res[0];
         dispatch({
           type: actionType.LOGIN_THIS_USER,
           payload: {
             displayName,
             email: emailLogin,
             uid,
+            ...res[1].val(),
           },
         });
         navDispatch(NavigationActions.reset({

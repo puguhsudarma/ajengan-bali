@@ -12,8 +12,11 @@ class GeoMap extends Component {
   }
 
   render() {
-    const { markers } = this.props.warung;
-    const { title, regionMap } = this.props.appSetting;
+    const initRegion = {
+
+    };
+    const { list } = this.props.warung;
+    const { title } = this.props.appSetting;
     const { navigate } = this.props.navigation;
     return (
       <Container>
@@ -24,16 +27,16 @@ class GeoMap extends Component {
           }}
           rightItem={[{
             id: 1,
-            icon: 'refresh',
-            funcPress: () => { },
+            icon: 'search',
+            funcPress: () => navigate('Auth.Search'),
           }]}
-          subtitle={title.toUpperCase}
+          subtitle={title.toUpperCase()}
           title="Peta Warung"
         />
         <MapWarung
-          marker={markers}
+          marker={list}
           onRegionChange={() => { }}
-          regionMap={regionMap}
+          regionMap={initRegion}
         />
       </Container>
     );
@@ -46,7 +49,8 @@ GeoMap.propTypes = {
   navigation: PropTypes.shape().isRequired,
 };
 
-const mapStateToProps = () => ({});
-const mapDispatchToProps = () => ({});
-export default connect(mapStateToProps, mapDispatchToProps)(GeoMap);
-
+const mapStateToProps = state => ({
+  warung: state.warung,
+  appSetting: state.appSetting,
+});
+export default connect(mapStateToProps)(GeoMap);
