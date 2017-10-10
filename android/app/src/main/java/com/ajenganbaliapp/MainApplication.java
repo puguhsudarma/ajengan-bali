@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.airbnb.android.react.maps.MapsPackage;
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -18,7 +19,7 @@ import io.invertase.firebase.crash.RNFirebaseCrashPackage; // Firebase Crash Rep
 import io.invertase.firebase.database.RNFirebaseDatabasePackage; // Firebase Realtime Database
 import io.invertase.firebase.storage.RNFirebaseStoragePackage; // Firebase Storage
 import io.invertase.firebase.perf.RNFirebasePerformancePackage; // Firebase Messaging
-import io.invertase.firebase.admob.RNFirebaseAdMobPackage;
+import io.invertase.firebase.admob.RNFirebaseAdMobPackage; // Firebase AdMob
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,18 +35,20 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new RNFirebaseAdMobPackage(),
-              // Firebase package
-              new RNFirebasePackage(),
-              new RNFirebaseAnalyticsPackage(),
-              new RNFirebaseAuthPackage(),
-              new RNFirebaseCrashPackage(),
-              new RNFirebaseDatabasePackage(),
-              new RNFirebaseStoragePackage(),
-              new RNFirebasePerformancePackage(),
-            new MapsPackage(),
-            new LocationServicesDialogBoxPackage()
+        new MainReactPackage(),
+        new VectorIconsPackage(),
+        new MapsPackage(),
+        new LocationServicesDialogBoxPackage(),
+
+        // Firebase package
+        new RNFirebasePackage(),
+        new RNFirebaseAnalyticsPackage(),
+        new RNFirebaseAuthPackage(),
+        new RNFirebaseCrashPackage(),
+        new RNFirebaseDatabasePackage(),
+        new RNFirebaseStoragePackage(),
+        new RNFirebasePerformancePackage(),
+        new RNFirebaseAdMobPackage()
       );
     }
   };
