@@ -29,9 +29,8 @@ const MapWarung = ({ regionMap, marker, onRegionChange }) => (
       style={styles.map}
       region={regionMap}
       onRegionChange={onRegionChange}
-    >
-      <MapMarker mark={marker} />
-    </MapView>
+    />
+    {/* <MapMarker mark={marker} /> */}
   </View>
 );
 

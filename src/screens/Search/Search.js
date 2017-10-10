@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Container, Content } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { getDistance } from 'geolib';
+import { orderBy } from 'lodash';
 import Header from '../../components/Header/Header';
 import FormInput from './Search.FormInput';
 import Result from './Search.Result';
@@ -62,20 +64,137 @@ class Search extends Component {
   }
 
   _onSearchSubmit() {
-    const { queryText } = this.state;
+    const { queryText, jenisData } = this.state;
+    const { dispatch, appSetting } = this.props;
     if (queryText === '') {
       return this.setState({ msg: 'form tidak boleh kosong.' });
     }
-
     this.setState({ msg: '', isSearching: true });
-    setTimeout(() => {
-      this.setState({ isSearching: false });
-    }, 5000);
-    return console.log(this.state);
+
+    // pencarian warung
+    if (jenisData === 'warung') {
+      return firebase.database()
+        .ref('warung')
+        .orderByChild('softDelete')
+        .equalTo(false)
+        .once('value')
+        .then((snapShot) => {
+          const data = [];
+          snapShot.forEach((snapChild) => {
+            const val = snapChild.val();
+            const jarak = getDistance(
+              {
+                latitude: parseFloat(val.lat),
+                longitude: parseFloat(val.lng),
+              },
+              {
+                latitude: appSetting.position.coords.latitude,
+                longitude: appSetting.position.coords.longitude,
+              },
+            );
+            data.push({
+              key: snapChild.key,
+              jarak: parseFloat((jarak / 1000).toFixed(2)),
+              ...val,
+            });
+          });
+          const fixedData = orderBy(data, ['jarak'], ['asc']);
+          dispatch({
+            type: actionType.FETCH_SEARCHED_LIST_WARUNG,
+            payload: fixedData,
+          });
+          this.setState({ isSearching: false, isSearched: true });
+        })
+        .catch((err) => {
+          dispatch({
+            type: actionType.ERROR_WARUNG,
+            payload: err,
+          });
+          toast(err.message);
+        })
+        .finally(() => {
+          this.setState({ isSearching: false, isSearched: true });
+        });
+    }
+
+    // pencarian makanan
+    return firebase.database()
+      .ref('makanan')
+      .orderByChild('softDelete')
+      .equalTo(false)
+      .once('value')
+      .then((snapShot) => {
+        const promises = [];
+        const data = [];
+        snapShot.forEach((snapChild) => {
+          promises.push(
+            firebase.database()
+              .ref(`warung/${snapChild.val().warungId}`)
+              .once('value'),
+          );
+        });
+
+        Promise.all(promises)
+          .then((snapJoin) => {
+            let index = 0;
+            snapShot.forEach((snapChild) => {
+              const valMakanan = snapChild.val();
+              const valWarung = snapJoin[index].val();
+              index += 1;
+
+              const jarak = getDistance(
+                {
+                  latitude: parseFloat(valWarung.lat),
+                  longitude: parseFloat(valWarung.lng),
+                },
+                {
+                  latitude: appSetting.position.coords.latitude,
+                  longitude: appSetting.position.coords.longitude,
+                },
+              );
+              data.push({
+                key: snapChild.key,
+                jarak: parseFloat((jarak / 1000).toFixed(2)),
+                warung: { ...valWarung },
+                daerah: valWarung.daerah,
+                ...valMakanan,
+              });
+            });
+            const fixedData = orderBy(data, ['jarak'], ['asc']);
+            dispatch({
+              type: actionType.FETCH_SEARCHED_LIST_MAKANAN,
+              payload: fixedData,
+            });
+          });
+      })
+      .catch((err) => {
+        dispatch({
+          type: actionType.ERROR_MAKANAN,
+          payload: err,
+        });
+        toast(err.message);
+      })
+      .finally(() => {
+        this.setState({ isSearching: false, isSearched: true });
+      });
   }
 
   _onPressItem(item) {
+    const { jenisData } = this.state;
     const { dispatch, navigation } = this.props;
+    if (jenisData === 'warung') {
+      dispatch({
+        type: actionType.SELECT_DATA_WARUNG,
+        payload: item,
+      });
+      return navigation.navigate('Auth.DetailWarung');
+    }
+
+    dispatch({
+      type: actionType.SELECT_DATA_MAKANAN,
+      payload: { ...item, fromWarungPage: false },
+    });
+    return navigation.navigate('Auth.DetailMakanan');
   }
 
   render() {

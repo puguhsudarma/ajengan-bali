@@ -87,7 +87,7 @@ const Result = ({ isSearched, data, maxRating, onPress, jenisData }) => {
 
 Result.propTypes = {
   isSearched: PropTypes.bool.isRequired,
-  data: PropTypes.arrayOf().isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   onPress: PropTypes.func.isRequired,
   jenisData: PropTypes.string.isRequired,
   maxRating: PropTypes.number.isRequired,
