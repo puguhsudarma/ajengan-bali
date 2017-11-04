@@ -114,15 +114,18 @@ class Dashboard extends Component {
           hasTabs
           subtitle={appSetting.title.toUpperCase()}
           title="Dashboard"
-          leftItem={{
-            icon: 'menu',
-            funcPress: () => navigate('DrawerOpen'),
-          }}
-          rightItem={[{
-            id: 1,
-            icon: 'search',
-            funcPress: () => navigate('Auth.Search'),
-          }]}
+          rightItem={[
+            {
+              id: 1,
+              icon: 'search',
+              funcPress: () => navigate('Auth.Search'),
+            },
+            {
+              id: 2,
+              icon: 'people',
+              funcPress: () => navigate('Auth.Profile'),
+            },
+          ]}
         />
         <Tabs>
           <Tab heading={<TabHeading><Icon name="ios-restaurant" /><Text>Warung</Text></TabHeading>}>

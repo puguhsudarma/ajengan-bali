@@ -51,15 +51,15 @@ class Profile extends Component {
 
   render() {
     const { loading } = this.state;
-    const { navigate } = this.props.navigation;
+    const { goBack } = this.props.navigation;
     const { title, userLogin: user } = this.props.appSetting;
 
     return (
       <Container>
         <Header
           leftItem={{
-            icon: 'menu',
-            funcPress: () => navigate('DrawerOpen'),
+            icon: 'arrow-back',
+            funcPress: () => goBack(),
           }}
           subtitle={title.toUpperCase()}
           title="Profile"

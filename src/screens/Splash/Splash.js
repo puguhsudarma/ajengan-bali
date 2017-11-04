@@ -51,7 +51,7 @@ class Splash extends Component {
           });
           return navDispatch(NavigationActions.reset({
             index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
+            actions: [NavigationActions.navigate({ routeName: 'Auth.Dashboard' })],
           }));
         }
         return navDispatch(NavigationActions.reset({

@@ -199,7 +199,7 @@ class Search extends Component {
 
   render() {
     const { isSearched, isSearching, listKategoriMakanan, jenisData, msg } = this.state;
-    const { navigate } = this.props.navigation;
+    const { goBack } = this.props.navigation;
     const { title, maxRating } = this.props.appSetting;
     const { warung, makanan } = this.props;
 
@@ -207,8 +207,8 @@ class Search extends Component {
       <Container>
         <Header
           leftItem={{
-            icon: 'menu',
-            funcPress: () => navigate('DrawerOpen'),
+            icon: 'arrow-back',
+            funcPress: () => goBack(),
           }}
           subtitle={title.toUpperCase()}
           title="Search"
