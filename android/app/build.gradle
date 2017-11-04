@@ -133,6 +133,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-vector-icons')
+//    compile project(':react-native-firebase')
     // RNFirebase Required dependencies
     compile(project(':react-native-firebase')) {
         transitive = false
@@ -150,7 +152,6 @@ dependencies {
     compile "com.google.firebase:firebase-perf:11.0.0"
     compile "com.google.firebase:firebase-storage:11.0.0"
 
-//    compile project(':react-native-firebase')
     compile project(':react-native-maps')
     compile project(':react-native-android-location-services-dialog-box')
     compile fileTree(dir: "libs", include: ["*.jar"])
