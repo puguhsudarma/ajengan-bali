@@ -17,27 +17,27 @@ import Loader from '../../HOC/Loader/Loader';
 import styles from './Dashboard.Style';
 
 // Render Item
-const RenderWarungItem = ({ item, maxRating, navigate, selected }) => (
-  <ListItem thumbnail onPress={() => { selected(item); navigate('Auth.DetailWarung'); }}>
+const RenderWarungItem = ({ item, maxRating, onPress }) => (
+  <ListItem thumbnail onPress={onPress}>
     <Left>
       <Thumbnail square size={80} source={{ uri: item.picture }} />
     </Left>
     <Body>
       <Text>{item.nama}</Text>
       <Text note><Icon name="pin" style={styles.fontIcon} /> {item.daerah}</Text>
-      <Text note><Icon name="bus" style={styles.fontIcon} /> Jarak : {item.range} Km</Text>
+      <Text note><Icon name="bus" style={styles.fontIcon} /> Jarak : {item.km} Km</Text>
       <View style={styles.viewRating}>
         <StarRating
           starSize={15}
           maxStars={maxRating}
-          rating={item.rating}
+          rating={item.totalRating}
           starColor={styles.ratingColor}
           disabled
         />
       </View>
     </Body>
     <Right>
-      <Button transparent onPress={() => { selected(item); navigate('Auth.DetailWarung'); }}>
+      <Button transparent onPress={onPress}>
         <Text>View</Text>
       </Button>
     </Right>
@@ -47,25 +47,22 @@ const RenderWarungItem = ({ item, maxRating, navigate, selected }) => (
 RenderWarungItem.propTypes = {
   item: PropTypes.shape().isRequired,
   maxRating: PropTypes.number.isRequired,
-  navigate: PropTypes.func.isRequired,
-  selected: PropTypes.func.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
 
 // Flat List
-const ListWarung = ({ loading, data, maxRating, navigate, refreshCallback, selected }) => (
+const ListWarung = ({ loading, data, maxRating, refreshCallback, selected }) => (
   <FlatList
     data={data}
     refreshing={loading}
     keyExtractor={item => item.key}
     onRefresh={refreshCallback}
     renderItem={
-      ({ item }) =>
-        (<RenderWarungItem
-          item={item}
-          maxRating={maxRating}
-          navigate={navigate}
-          selected={selected}
-        />)
+      ({ item }) => (<RenderWarungItem
+        item={item}
+        maxRating={maxRating}
+        onPress={() => selected(item)}
+      />)
     }
   />
 );
@@ -73,7 +70,6 @@ const ListWarung = ({ loading, data, maxRating, navigate, refreshCallback, selec
 ListWarung.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   maxRating: PropTypes.number.isRequired,
-  navigate: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   refreshCallback: PropTypes.func.isRequired,
   selected: PropTypes.func.isRequired,

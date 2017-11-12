@@ -24,7 +24,7 @@ const CardDetailWarung = ({ item, displayButton, navigate }) => (
     </CardItem>
     <CardItem>
       <Icon active name="bus" style={styles.iconColor} />
-      <Text>{`${item.range} Km`}</Text>
+      <Text>{`${item.km} Km`}</Text>
     </CardItem>
     <CardItem>
       <Icon active name="pin" style={styles.iconColor} />

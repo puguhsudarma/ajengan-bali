@@ -15,6 +15,7 @@ class App extends Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this._onBackPress);
   }
+
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this._onBackPress);
   }

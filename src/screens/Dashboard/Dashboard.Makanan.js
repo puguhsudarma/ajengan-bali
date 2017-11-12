@@ -24,14 +24,15 @@ const RenderMakananItem = ({ item, maxRating, onPress }) => (
     </Left>
     <Body>
       <Text>{item.nama}</Text>
+      <Text note><Icon name="home" style={styles.fontIcon} />{item.warung.nama}</Text>
       <Text note><Icon name="folder" style={styles.fontIcon} />Kategori : {item.kategori}</Text>
-      <Text note><Icon name="pin" style={styles.fontIcon} /> {item.daerah}</Text>
-      <Text note><Icon name="bus" style={styles.fontIcon} /> Jarak : {item.range} Km</Text>
+      <Text note><Icon name="pin" style={styles.fontIcon} /> {item.warung.daerah}</Text>
+      <Text note><Icon name="bus" style={styles.fontIcon} /> Jarak : {item.km} Km</Text>
       <View style={styles.viewRating}>
         <StarRating
           starSize={15}
           maxStars={maxRating}
-          rating={item.rating}
+          rating={item.totalRating}
           starColor={styles.ratingColor}
           disabled
         />
@@ -52,7 +53,7 @@ RenderMakananItem.propTypes = {
 };
 
 // Flat List
-const ListMakanan = ({ data, maxRating, navigate, loading, refreshCallback, selected }) => (
+const ListMakanan = ({ data, maxRating, loading, refreshCallback, selected }) => (
   <FlatList
     data={data}
     refreshing={loading}
@@ -62,7 +63,7 @@ const ListMakanan = ({ data, maxRating, navigate, loading, refreshCallback, sele
       ({ item }) => (<RenderMakananItem
         item={item}
         maxRating={maxRating}
-        onPress={() => { selected(item); navigate('Auth.DetailMakanan'); }}
+        onPress={() => selected(item)}
       />)
     }
   />
@@ -70,7 +71,6 @@ const ListMakanan = ({ data, maxRating, navigate, loading, refreshCallback, sele
 
 ListMakanan.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  navigate: PropTypes.func.isRequired,
   maxRating: PropTypes.number.isRequired,
   loading: PropTypes.bool.isRequired,
   refreshCallback: PropTypes.func.isRequired,

@@ -31,7 +31,7 @@ const RenderItem = ({ item, onPress, maxRating, jenisData }) =>
           <Text note><Icon name="folder" style={styles.iconList} /> {`Kategori : ${item.kategori}`}</Text>
         }
         <Text note><Icon name="pin" style={styles.iconList} /> {item.daerah}</Text>
-        <Text note><Icon name="bus" style={styles.iconList} /> {`Jarak : ${item.jarak} Km`}</Text>
+        <Text note><Icon name="bus" style={styles.iconList} /> {`Jarak : ${item.km} Km`}</Text>
         <View style={styles.starContainer}>
           <StarRating
             disabled

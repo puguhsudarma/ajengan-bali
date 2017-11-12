@@ -46,9 +46,11 @@ class DetailWarung extends Component {
     this._handleClickMakanan = this._handleClickMakanan.bind(this);
   }
 
-  componentDidMount() {
-    this._fetchMakanan();
-    this._fetchListReview();
+  componentWillMount() {
+    Promise.all([
+      this._fetchMakanan(),
+      this._fetchListReview(),
+    ]);
   }
 
   componentWillUnmount() {

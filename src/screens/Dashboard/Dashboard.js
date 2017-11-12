@@ -34,15 +34,22 @@ class Dashboard extends Component {
   }
 
   componentWillMount() {
-    this._fetchWarung();
-    this._fetchMakanan();
+    Promise.all([
+      this._fetchWarung(),
+      this._fetchMakanan(),
+    ]);
   }
 
   _fetchWarung() {
-    const { dispatch } = this.props;
+    const { dispatch, appSetting } = this.props;
+    const dataPost = {
+      lat: appSetting.position.coords.latitude,
+      lng: appSetting.position.coords.longitude,
+      uid: appSetting.userLogin.uid,
+    };
 
     this.setState({ warungIsFetching: true });
-    axios.get(this.url.warung)
+    return axios.post(this.url.warung, dataPost)
       .then(({ data }) => {
         dispatch({
           type: actionType.FETCH_DATA_LIST_WARUNG,
@@ -62,9 +69,15 @@ class Dashboard extends Component {
   }
 
   _fetchMakanan() {
-    const { dispatch } = this.props;
+    const { dispatch, appSetting } = this.props;
+    const dataPost = {
+      lat: appSetting.position.coords.latitude,
+      lng: appSetting.position.coords.longitude,
+      uid: appSetting.userLogin.uid,
+    };
+
     this.setState({ makananIsFetching: true });
-    axios.get(this.url.makanan)
+    return axios.post(this.url.makanan, dataPost)
       .then(({ data }) => {
         dispatch({
           type: actionType.FETCH_DATA_LIST_MAKANAN,
@@ -99,6 +112,14 @@ class Dashboard extends Component {
       payload: {
         ...item,
         fromWarungPage: false,
+      },
+    });
+    dispatch({
+      type: actionType.SELECT_DATA_WARUNG,
+      payload: {
+        ...item.warung,
+        key: item.warungId,
+        km: item.km,
       },
     });
     navigation.navigate('Auth.DetailMakanan');

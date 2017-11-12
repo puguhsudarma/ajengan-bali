@@ -24,7 +24,7 @@ const CardDetail = ({ data, maxRating }) => (
     </CardItem>
     <CardItem>
       <Icon active name="bus" style={styles.iconColor} />
-      <Text>{`${data.range} Km`}</Text>
+      <Text>{`${data.km} Km`}</Text>
     </CardItem>
     <CardItem>
       <Icon active name="pin" style={styles.iconColor} />

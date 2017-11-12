@@ -7,7 +7,6 @@ import getDirections from 'react-native-google-maps-directions';
 import { isEmpty } from 'lodash';
 import Modal from 'react-native-modal';
 import StarRating from 'react-native-star-rating';
-import { getDistance } from 'geolib';
 import * as actionType from '../../actions/actionType';
 import firebase from '../../config/firebase';
 import { toast } from '../../components/Toast/Toast';
@@ -28,22 +27,18 @@ class DetailMakanan extends Component {
       visible: false,
     };
 
-    this.__listenFetchReview = null;
-
     this._onModalShow = this._onModalShow.bind(this);
     this._onModalOk = this._onModalOk.bind(this);
     this._onModalCancel = this._onModalCancel.bind(this);
     this._handleGetDirections = this._handleGetDirections.bind(this);
 
+    this.__listenFetchReview = null;
     this._fetchListReview = this._fetchListReview.bind(this);
     this.___handleSuccessListReview = this.___handleSuccessListReview.bind(this);
     this.___handleErrorListReview = this.___handleErrorListReview.bind(this);
-
-    this._fetchDataWarung = this._fetchDataWarung.bind(this);
   }
 
   componentDidMount() {
-    this._fetchDataWarung();
     this._fetchListReview();
   }
 
@@ -52,45 +47,6 @@ class DetailMakanan extends Component {
       this.__listenFetchReview
         .off('value', this.___handleSuccessListReview, this.___handleErrorListReview);
     }
-  }
-
-  // Fetch data warung
-  _fetchDataWarung() {
-    const { makanan, appSetting, dispatch } = this.props;
-    if (makanan.selected.fromWarungPage) {
-      return 0;
-    }
-
-    return firebase.database().ref(`warung/${makanan.selected.warungId}`)
-      .once('value')
-      .then((snapshot) => {
-        const val = snapshot.val();
-        let distance = '-';
-        if (!isEmpty(appSetting.position)) {
-          distance = getDistance(
-            {
-              latitude: appSetting.position.coords.latitude,
-              longitude: appSetting.position.coords.longitude,
-            },
-            {
-              latitude: val.lat,
-              longitude: val.lng,
-            },
-          );
-          distance /= 1000;
-        }
-        dispatch({
-          type: actionType.SELECT_DATA_WARUNG,
-          payload: { ...val, range: distance.toFixed(2) },
-        });
-      })
-      .catch((err) => {
-        dispatch({
-          type: actionType.ERROR_WARUNG,
-          payload: err,
-        });
-        toast(err.message);
-      });
   }
 
   // Fetch List Review
@@ -224,7 +180,6 @@ class DetailMakanan extends Component {
     const { makanan, warung, appSetting } = this.props;
     const { title, maxRating } = appSetting;
     const { goBack, navigate } = this.props.navigation;
-
 
     return (
       <Container>

@@ -82,7 +82,7 @@ class Pendaftaran extends Component {
       });
       navDispatch(NavigationActions.reset({
         index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'Unauth.Auth' })],
+        actions: [NavigationActions.navigate({ routeName: 'Auth.Dashboard' })],
       }));
     } catch (err) {
       dispatch({
@@ -90,7 +90,6 @@ class Pendaftaran extends Component {
         payload: err,
       });
       this.setState({ msg: err.message });
-    } finally {
       this.setState({ loading: false });
     }
   }

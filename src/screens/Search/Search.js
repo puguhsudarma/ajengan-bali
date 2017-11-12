@@ -94,11 +94,11 @@ class Search extends Component {
             );
             data.push({
               key: snapChild.key,
-              jarak: parseFloat((jarak / 1000).toFixed(2)),
+              km: parseFloat((jarak / 1000).toFixed(2)),
               ...val,
             });
           });
-          const fixedData = orderBy(data, ['jarak'], ['asc']);
+          const fixedData = orderBy(data, ['km'], ['asc']);
           dispatch({
             type: actionType.FETCH_SEARCHED_LIST_WARUNG,
             payload: fixedData,
@@ -154,13 +154,13 @@ class Search extends Component {
               );
               data.push({
                 key: snapChild.key,
-                jarak: parseFloat((jarak / 1000).toFixed(2)),
+                km: parseFloat((jarak / 1000).toFixed(2)),
                 warung: { ...valWarung },
                 daerah: valWarung.daerah,
                 ...valMakanan,
               });
             });
-            const fixedData = orderBy(data, ['jarak'], ['asc']);
+            const fixedData = orderBy(data, ['km'], ['asc']);
             dispatch({
               type: actionType.FETCH_SEARCHED_LIST_MAKANAN,
               payload: fixedData,
@@ -192,7 +192,18 @@ class Search extends Component {
 
     dispatch({
       type: actionType.SELECT_DATA_MAKANAN,
-      payload: { ...item, fromWarungPage: false },
+      payload: {
+        ...item,
+        fromWarungPage: false,
+      },
+    });
+    dispatch({
+      type: actionType.SELECT_DATA_WARUNG,
+      payload: {
+        ...item.warung,
+        key: item.warungId,
+        km: item.km,
+      },
     });
     return navigation.navigate('Auth.DetailMakanan');
   }
