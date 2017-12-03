@@ -28,10 +28,15 @@ class Search extends Component {
     this._onChangeText = this._onChangeText.bind(this);
     this._onSearchSubmit = this._onSearchSubmit.bind(this);
     this._onPressItem = this._onPressItem.bind(this);
+    this._showResults = this._showResults.bind(this);
   }
 
   componentWillMount() {
     this._fetchKategoriMakanan();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.jenisData === nextState.jenisData;
   }
 
   _fetchKategoriMakanan() {
@@ -65,107 +70,31 @@ class Search extends Component {
 
   _onSearchSubmit() {
     const { queryText, jenisData } = this.state;
-    const { dispatch, appSetting } = this.props;
+    const { dispatch } = this.props;
+    const query = {};
+    const PATH_REQUEST = 'search/request';
+    const PATH_RESPONSE = 'search/response';
+
     if (queryText === '') {
       return this.setState({ msg: 'form tidak boleh kosong.' });
     }
     this.setState({ msg: '', isSearching: true });
 
-    // pencarian warung
+    // setting query
     if (jenisData === 'warung') {
-      return firebase.database()
-        .ref('warung')
-        .orderByChild('softDelete')
-        .equalTo(false)
-        .once('value')
-        .then((snapShot) => {
-          const data = [];
-          snapShot.forEach((snapChild) => {
-            const val = snapChild.val();
-            const jarak = getDistance(
-              {
-                latitude: parseFloat(val.lat),
-                longitude: parseFloat(val.lng),
-              },
-              {
-                latitude: appSetting.position.coords.latitude,
-                longitude: appSetting.position.coords.longitude,
-              },
-            );
-            data.push({
-              key: snapChild.key,
-              km: parseFloat((jarak / 1000).toFixed(2)),
-              ...val,
-            });
-          });
-          const fixedData = orderBy(data, ['km'], ['asc']);
-          dispatch({
-            type: actionType.FETCH_SEARCHED_LIST_WARUNG,
-            payload: fixedData,
-          });
-          this.setState({ isSearching: false, isSearched: true });
-        })
-        .catch((err) => {
-          dispatch({
-            type: actionType.ERROR_WARUNG,
-            payload: err,
-          });
-          toast(err.message);
-        })
-        .finally(() => {
-          this.setState({ isSearching: false, isSearched: true });
-        });
+      query.index = 'firebase_warung';
+      query.type = 'warung';
+      query.q = queryText;
+    } else {
+      query.index = 'firebase_makanan';
+      query.type = 'makanan';
+      query.q = queryText;
     }
 
-    // pencarian makanan
-    return firebase.database()
-      .ref('makanan')
-      .orderByChild('softDelete')
-      .equalTo(false)
-      .once('value')
-      .then((snapShot) => {
-        const promises = [];
-        const data = [];
-        snapShot.forEach((snapChild) => {
-          promises.push(
-            firebase.database()
-              .ref(`warung/${snapChild.val().warungId}`)
-              .once('value'),
-          );
-        });
-
-        Promise.all(promises)
-          .then((snapJoin) => {
-            let index = 0;
-            snapShot.forEach((snapChild) => {
-              const valMakanan = snapChild.val();
-              const valWarung = snapJoin[index].val();
-              index += 1;
-
-              const jarak = getDistance(
-                {
-                  latitude: parseFloat(valWarung.lat),
-                  longitude: parseFloat(valWarung.lng),
-                },
-                {
-                  latitude: appSetting.position.coords.latitude,
-                  longitude: appSetting.position.coords.longitude,
-                },
-              );
-              data.push({
-                key: snapChild.key,
-                km: parseFloat((jarak / 1000).toFixed(2)),
-                warung: { ...valWarung },
-                daerah: valWarung.daerah,
-                ...valMakanan,
-              });
-            });
-            const fixedData = orderBy(data, ['km'], ['asc']);
-            dispatch({
-              type: actionType.FETCH_SEARCHED_LIST_MAKANAN,
-              payload: fixedData,
-            });
-          });
+    // push query to request path
+    return firebase.database().ref(PATH_REQUEST).push(query)
+      .then((request) => {
+        firebase.database().ref(`${PATH_RESPONSE}/${request.key}`).on('value', this._showResults);
       })
       .catch((err) => {
         dispatch({
@@ -177,6 +106,96 @@ class Search extends Component {
       .finally(() => {
         this.setState({ isSearching: false, isSearched: true });
       });
+  }
+
+  async _showResults(snap) {
+    // get data
+    const { jenisData } = this.state;
+    const { appSetting, dispatch } = this.props;
+    try {
+      const dataResponse = snap.val().hits.hits;
+      // remove listeners once get the data
+      snap.ref.off('value', this._showResults);
+      // snap.ref.remove();
+
+      // get result query from response path
+
+      // warung
+      if (jenisData === 'warung') {
+        const payload = dataResponse;
+        const data = [];
+        payload.forEach((val) => {
+          const jarak = getDistance(
+            {
+              latitude: parseFloat(val._source.lat),
+              longitude: parseFloat(val._source.lng),
+            },
+            {
+              latitude: appSetting.position.coords.latitude,
+              longitude: appSetting.position.coords.longitude,
+            },
+          );
+          data.push({
+            key: val._id,
+            km: parseFloat((jarak / 1000).toFixed(2)),
+            ...val._source,
+          });
+        });
+        const fixedData = orderBy(data, ['km'], ['asc']);
+        dispatch({
+          type: actionType.FETCH_SEARCHED_LIST_WARUNG,
+          payload: fixedData,
+        });
+        return;
+      }
+
+      // makanan
+      const snapJoin = await firebase.database().ref('warung').once('value');
+      const payloadJoin = snapJoin.val();
+      const payloadSearch = dataResponse;
+      const data = [];
+
+      payloadSearch.forEach((snapChild) => {
+        const valMakanan = snapChild._source;
+        const valWarung = payloadJoin[valMakanan.warungId];
+
+        const jarak = getDistance(
+          {
+            latitude: parseFloat(valWarung.lat),
+            longitude: parseFloat(valWarung.lng),
+          },
+          {
+            latitude: appSetting.position.coords.latitude,
+            longitude: appSetting.position.coords.longitude,
+          },
+        );
+        data.push({
+          key: snapChild._id,
+          km: parseFloat((jarak / 1000).toFixed(2)),
+          warung: { ...valWarung },
+          daerah: valWarung.daerah,
+          ...valMakanan,
+        });
+      });
+      const fixedData = orderBy(data, ['km'], ['asc']);
+      dispatch({
+        type: actionType.FETCH_SEARCHED_LIST_MAKANAN,
+        payload: fixedData,
+      });
+    } catch (err) {
+      if (jenisData === 'warung') {
+        dispatch({
+          type: actionType.ERROR_WARUNG,
+          payload: err,
+        });
+      } else {
+        dispatch({
+          type: actionType.ERROR_MAKANAN,
+          payload: err,
+        });
+      }
+      toast('Terjadi kegagalan koneksi. Mohon tunggu...');
+    }
   }
 
   _onPressItem(item) {
@@ -238,7 +257,7 @@ class Search extends Component {
               onValueChange: val => this.setState({ kategoriMakanan: val }),
             }}
             message={msg}
-            jenisData={jenisData}
+            jenisData={'warung'}
             loading={isSearching}
             onChangeText={this._onChangeText}
             onSearch={this._onSearchSubmit}

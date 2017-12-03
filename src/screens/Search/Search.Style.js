@@ -27,6 +27,10 @@ const styles = {
   textMsg: {
     color: 'red',
   },
+  resultMsg: {
+    color: 'red',
+    textAlign: 'center',
+  },
 };
 
 export default styles;

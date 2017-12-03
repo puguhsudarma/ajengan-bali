@@ -35,6 +35,10 @@ const CardDetail = ({ data, maxRating }) => (
       <Text>{data.alamat}</Text>
     </CardItem>
     <CardItem>
+      <Icon active name="call" style={styles.iconColor} />
+      <Text>{data.telepon}</Text>
+    </CardItem>
+    <CardItem>
       <Icon active name="list" style={styles.iconColor} />
       <Text>{data.deskripsi}</Text>
     </CardItem>

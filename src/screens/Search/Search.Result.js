@@ -66,6 +66,11 @@ const Result = ({ isSearched, data, maxRating, onPress, jenisData }) => {
             <TitleCard>Hasil Pencarian</TitleCard>
           </Body>
         </CardItem>
+        {
+          // data.length === 0 ?
+          //   <Text style={styles.resultMsg}>Pencarian tidak ditemukan</Text> :
+        }
+
         <FlatList
           style={styles.listResult}
           keyExtractor={item => item.key}

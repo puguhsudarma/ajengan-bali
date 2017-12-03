@@ -34,6 +34,10 @@ const CardDetailWarung = ({ item, displayButton, navigate }) => (
       <Icon active name="map" style={styles.iconColor} />
       <Text>{item.alamat}</Text>
     </CardItem>
+    <CardItem>
+      <Icon active name="call" style={styles.iconColor} />
+      <Text>{item.telepon}</Text>
+    </CardItem>
     {
       !displayButton &&
       <CardItem>
