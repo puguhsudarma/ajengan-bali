@@ -69,8 +69,8 @@ class DetailWarung extends Component {
   _fetchMakanan() {
     const { warung } = this.props;
     this.__listenFetchMakanan = firebase.database().ref('makanan')
-      .orderByChild('indexWarungSoftDelete')
-      .equalTo(`${false}_${warung.selected.key}`);
+      .orderByChild('warungId')
+      .equalTo(warung.selected.key);
     this.__listenFetchMakanan.on('value', this.___handleSuccessFetchMakanan, this.___handleErrorFetchMakanan);
   }
 

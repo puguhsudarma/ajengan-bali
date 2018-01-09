@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Container,
-  Icon,
-  Text,
-  Tabs,
-  Tab,
-  TabHeading,
+  // Icon,
+  // Text,
+  // Tabs,
+  // Tab,
+  // TabHeading,
+  Content,
 } from 'native-base';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Header from '../../components/Header/Header';
 import ListWarung from './Dashboard.Warung';
-import ListMakanan from './Dashboard.Makanan';
+// import ListMakanan from './Dashboard.Makanan';
 import * as actionType from '../../actions/actionType';
 import { toast } from '../../components/Toast/Toast';
 
@@ -21,22 +22,22 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       warungIsFetching: false,
-      makananIsFetching: false,
+      // makananIsFetching: false,
     };
     this.url = {
       warung: 'https://us-central1-ajengan-bali.cloudfunctions.net/rekomendasiWarung',
-      makanan: 'https://us-central1-ajengan-bali.cloudfunctions.net/rekomendasiMakanan',
+      // makanan: 'https://us-central1-ajengan-bali.cloudfunctions.net/rekomendasiMakanan',
     };
     this._fetchWarung = this._fetchWarung.bind(this);
-    this._fetchMakanan = this._fetchMakanan.bind(this);
+    // this._fetchMakanan = this._fetchMakanan.bind(this);
     this._handleClickItemWarung = this._handleClickItemWarung.bind(this);
-    this._handleClickItemMakanan = this._handleClickItemMakanan.bind(this);
+    // this._handleClickItemMakanan = this._handleClickItemMakanan.bind(this);
   }
 
   componentWillMount() {
     Promise.all([
       this._fetchWarung(),
-      this._fetchMakanan(),
+      // this._fetchMakanan(),
     ]);
   }
 
@@ -68,33 +69,33 @@ class Dashboard extends Component {
       });
   }
 
-  _fetchMakanan() {
-    const { dispatch, appSetting } = this.props;
-    const dataPost = {
-      lat: appSetting.position.coords.latitude,
-      lng: appSetting.position.coords.longitude,
-      uid: appSetting.userLogin.uid,
-    };
+  // _fetchMakanan() {
+  //   const { dispatch, appSetting } = this.props;
+  //   const dataPost = {
+  //     lat: appSetting.position.coords.latitude,
+  //     lng: appSetting.position.coords.longitude,
+  //     uid: appSetting.userLogin.uid,
+  //   };
 
-    this.setState({ makananIsFetching: true });
-    return axios.post(this.url.makanan, dataPost)
-      .then(({ data }) => {
-        dispatch({
-          type: actionType.FETCH_DATA_LIST_MAKANAN,
-          payload: data,
-        });
-      })
-      .catch((err) => {
-        dispatch({
-          type: actionType.ERROR_MAKANAN,
-          payload: err,
-        });
-        toast(err.message);
-      })
-      .finally(() => {
-        this.setState({ makananIsFetching: false });
-      });
-  }
+  //   this.setState({ makananIsFetching: true });
+  //   return axios.post(this.url.makanan, dataPost)
+  //     .then(({ data }) => {
+  //       dispatch({
+  //         type: actionType.FETCH_DATA_LIST_MAKANAN,
+  //         payload: data,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       dispatch({
+  //         type: actionType.ERROR_MAKANAN,
+  //         payload: err,
+  //       });
+  //       toast(err.message);
+  //     })
+  //     .finally(() => {
+  //       this.setState({ makananIsFetching: false });
+  //     });
+  // }
 
   _handleClickItemWarung(item) {
     const { dispatch, navigation } = this.props;
@@ -105,34 +106,42 @@ class Dashboard extends Component {
     navigation.navigate('Auth.DetailWarung');
   }
 
-  _handleClickItemMakanan(item) {
-    const { dispatch, navigation } = this.props;
-    dispatch({
-      type: actionType.SELECT_DATA_MAKANAN,
-      payload: {
-        ...item,
-        fromWarungPage: false,
-      },
-    });
-    dispatch({
-      type: actionType.SELECT_DATA_WARUNG,
-      payload: {
-        ...item.warung,
-        key: item.warungId,
-        km: item.km,
-      },
-    });
-    navigation.navigate('Auth.DetailMakanan');
-  }
+  // _handleClickItemMakanan(item) {
+  //   const { dispatch, navigation } = this.props;
+  //   dispatch({
+  //     type: actionType.SELECT_DATA_MAKANAN,
+  //     payload: {
+  //       ...item,
+  //       fromWarungPage: false,
+  //     },
+  //   });
+  //   dispatch({
+  //     type: actionType.SELECT_DATA_WARUNG,
+  //     payload: {
+  //       ...item.warung,
+  //       key: item.warungId,
+  //       km: item.km,
+  //     },
+  //   });
+  //   navigation.navigate('Auth.DetailMakanan');
+  // }
 
   render() {
-    const { makananIsFetching, warungIsFetching } = this.state;
-    const { appSetting, warung, makanan } = this.props;
-    const { navigate } = this.props.navigation;
+    const {
+      // makananIsFetching,
+      warungIsFetching,
+    } = this.state;
+    const {
+      appSetting,
+      warung,
+      // makanan,
+    } = this.props;
+    const {
+      navigate,
+    } = this.props.navigation;
     return (
       <Container>
         <Header
-          hasTabs
           subtitle={appSetting.title.toUpperCase()}
           title="Dashboard"
           rightItem={[
@@ -148,7 +157,18 @@ class Dashboard extends Component {
             },
           ]}
         />
-        <Tabs>
+        <Content>
+          <ListWarung
+            loading={warungIsFetching}
+            data={warung.list}
+            navigate={navigate}
+            selected={this._handleClickItemWarung}
+            maxRating={appSetting.maxRating}
+            refreshCallback={this._fetchWarung}
+          />
+        </Content>
+
+        {/* <Tabs>
           <Tab heading={<TabHeading><Icon name="ios-restaurant" /><Text>Warung</Text></TabHeading>}>
             <ListWarung
               loading={warungIsFetching}
@@ -169,7 +189,7 @@ class Dashboard extends Component {
               refreshCallback={this._fetchMakanan}
             />
           </Tab>
-        </Tabs>
+        </Tabs> */}
       </Container>
     );
   }
@@ -179,7 +199,7 @@ Dashboard.propTypes = {
   appSetting: PropTypes.shape().isRequired,
   navigation: PropTypes.shape().isRequired,
   warung: PropTypes.shape().isRequired,
-  makanan: PropTypes.shape().isRequired,
+  // makanan: PropTypes.shape().isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
